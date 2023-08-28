@@ -21,10 +21,30 @@ Instruction how to use Ros, Gazebo, TurtleBot3
 
                 rqt_plot need to assign a topic of the simulation that is runing such as /odom/pose/pose/position
         ◦ TurtleBot3 also include a teleoperate
-            ▪ roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
+            c roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
         
 
         ◦ check imu by. this is checking that turtlebot have launch a topic into note.
             rostopic echo /imu
 
-ppp
+
+
+    - Mapping : Grid mapping
+
+        ▪ export TURTLEBOT3_MODEL=waffle
+        ▪ roslaunch turtlebot3_gazebo turtlebot3_world.launch
+        ▪ roslaunch turtlebot3_slam turtlebot3_slam.launch slam_methods:=gmapping
+        To move around
+        ▪ roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
+
+    - Mapping :RTAB-MAP
+
+        ▪ export TURTLEBOT3_MODEL=waffle
+        ▪ roslaunch turtlebot3_gazebo
+        ▪ turtlebot3_world.launch
+
+        ▪ export TURTLEBOT3_MODEL=waffle
+        ▪ roslaunch rtabmap_demos
+        ▪ demo_turtlebot3_navigation.launch
+
+
