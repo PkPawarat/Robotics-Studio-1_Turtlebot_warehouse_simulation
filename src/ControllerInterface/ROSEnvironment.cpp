@@ -1,10 +1,10 @@
-#pragma once
-#include "ROSEnvironment.h"
+#include "library/ROSEnvironment.h" 
+#include <iostream>
 
 // Keep only the headers needed
 #include <vector>
 #include "pfms_types.h"
-// #include "ros/ros.h"
+#include "ros/ros.h"
 #include <atomic>
 #include <mutex>
 
@@ -15,14 +15,8 @@
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
 
-
-class Sensor {
-private:
-    ROSEnvironment rosEnv;
-
-public:
-    Sensor();
-    void simulateEnvironments();
-    void detectObject();
-    void detectQRCode();
-};
+void ROSEnvironment::simulate() {
+    // Simulate the environment using ROS
+    std::cout << "Simulating environment using ROS..." << std::endl;
+    // Add ROS simulation logic here
+}
