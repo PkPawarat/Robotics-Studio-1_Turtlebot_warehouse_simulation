@@ -23,21 +23,34 @@ struct Cell {
     int Col;
 };
 
-class AStar {
-private:
-    int** grid;
-    int rows;
-    int columns;
+struct CellHash {
+    std::size_t operator()(const Cell& cell) const {
+        // Combine the hash codes of the Row and Col members
+        return std::hash<int>()(cell.Row) ^ std::hash<int>()(cell.Col);
+    }
+};
 
-public:
-    AStar(int** grid, int rows, int columns);
-    ~AStar();
-    
-    std::vector<Cell> FindPath(const Cell& start, const Cell& goal);
+struct CellEqual {
+    bool operator()(const Cell& lhs, const Cell& rhs) const {
+        return lhs.Row == rhs.Row && lhs.Col == rhs.Col;
+    }
+};
 
-private:
-    std::vector<Cell> GetNeighbors(const Cell& cell);
-    double CalculateHeuristic(const Cell& cell, const Cell& goal);
-    std::vector<Cell> ReconstructPath(std::unordered_map<Cell, Cell>& cameFrom, Cell current);
+class pathfinding {
+    private:
+        int** grid;
+        int rows;
+        int columns;
+
+    public:
+        pathfinding(int** grid, int rows, int columns);
+        ~pathfinding();
+        
+        std::vector<Cell> FindPath(const Cell& start, const Cell& goal);
+
+    private:
+        std::vector<Cell> GetNeighbors(const Cell& cell);
+        double CalculateHeuristic(const Cell& cell, const Cell& goal);
+        std::vector<Cell> ReconstructPath(std::unordered_map<Cell, Cell, CellHash, CellEqual>& cameFrom, Cell current);
 };
 #endif // PATHFINDING

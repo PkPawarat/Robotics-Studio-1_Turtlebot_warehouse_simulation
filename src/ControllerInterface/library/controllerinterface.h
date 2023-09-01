@@ -92,13 +92,13 @@ class ControllerInterface
     // */
     // virtual nav_msgs::Odometry getOdometry(void) = 0;
 
-    virtual void Execute();
-    virtual void CheckTarget();
-    virtual void AssignTarget(const std::string &target);
-    virtual void CheckQRCode();
-    virtual void DriveTo(const std::string &location);
-    virtual void PickUpTarget();
-    virtual void DropTarget();
+    virtual void Execute() = 0 ;
+    virtual void CheckTarget() = 0 ;
+    virtual void AssignTarget(const std::string &target) = 0 ;
+    virtual void CheckQRCode() = 0 ;
+    virtual void DriveTo(const std::string &location) = 0 ;
+    virtual void PickUpTarget() = 0 ;
+    virtual void DropTarget() = 0 ;
 };
 
 #endif // CONTROLLERINTERFACE_H

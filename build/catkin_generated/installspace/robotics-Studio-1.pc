@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: robotics-Studio-1
+Description: Description of robotics-Studio-1
+Version: 0.0.1
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

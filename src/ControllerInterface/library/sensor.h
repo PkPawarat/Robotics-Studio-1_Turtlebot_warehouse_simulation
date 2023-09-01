@@ -18,7 +18,7 @@
 
 class Sensor {
 private:
-    ROSEnvironment rosEnv;
+    // ROSEnvironment rosEnv;
 
 public:
     Sensor();

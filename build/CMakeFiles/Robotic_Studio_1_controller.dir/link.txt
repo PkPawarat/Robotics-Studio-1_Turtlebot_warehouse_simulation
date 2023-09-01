@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -std=c++11  -Wno-deprecated -Wdeprecated-declarations  -shared -Wl,-soname,libRobotic_Studio_1_controller.so -o devel/lib/libRobotic_Studio_1_controller.so CMakeFiles/Robotic_Studio_1_controller.dir/src/ControllerInterface/controller.cpp.o 

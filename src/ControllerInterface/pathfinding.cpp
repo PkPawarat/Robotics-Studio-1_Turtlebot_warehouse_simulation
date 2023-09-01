@@ -1,131 +1,138 @@
-#include "library/pathfinding.h"
-#include <cmath>
-#include <queue>
-#include <functional>
-#include <algorithm>
-#include <utility>
+// #include "library/pathfinding.h"
+// #include <cmath>
+// #include <queue>
+// #include <functional>
+// #include <algorithm>
+// #include <utility>
 
-// Keep only the headers needed
-#include <vector>
-#include "pfms_types.h"
-#include "ros/ros.h"
-#include <atomic>
-#include <mutex>
+// // Keep only the headers needed
+// #include <vector>
+// #include "pfms_types.h"
+// #include "ros/ros.h"
+// #include <atomic>
+// #include <mutex>
 
-#include "visualization_msgs/MarkerArray.h"
-#include "std_srvs/SetBool.h"
-#include "nav_msgs/Odometry.h"
-#include "sensor_msgs/Range.h"
-#include "sensor_msgs/LaserScan.h"
-#include "geometry_msgs/PoseArray.h"
+// #include "visualization_msgs/MarkerArray.h"
+// #include "std_srvs/SetBool.h"
+// #include "nav_msgs/Odometry.h"
+// #include "sensor_msgs/Range.h"
+// #include "sensor_msgs/LaserScan.h"
+// #include "geometry_msgs/PoseArray.h"
 
-class PriorityQueue {
-private:
-    std::priority_queue<std::pair<double, Cell>, std::vector<std::pair<double, Cell>>, std::greater<>> elements;
+// class PriorityQueue {
+// private:
+//     // std::priority_queue<std::pair<double, Cell>, std::vector<std::pair<double, Cell>>, std::greater<>> elements;
+//     std::priority_queue<std::pair<double, Cell>, std::vector<std::pair<double, Cell>>, std::greater<std::pair<double, Cell>>> elements;
 
-public:
-    int Count() const {
-        return elements.size();
-    }
+//     std::unordered_set<Cell, CellHash, CellEqual> elementSet;
 
-    void Enqueue(const Cell& item, double priority) {
-        elements.push(std::make_pair(priority, item));
-    }
+// public:
+//     // PriorityQueue() : elements(std::greater<>()), elementSet() {}
+//     PriorityQueue() : elements(std::greater<std::pair<double, Cell>>()), elementSet() {}
 
-    Cell Dequeue() {
-        Cell topItem = elements.top().second;
-        elements.pop();
-        return topItem;
-    }
+//     int Count() const {
+//         return elements.size();
+//     }
 
-    bool Contains(const Cell& item) {
-        return std::any_of(elements.c.begin(), elements.c.end(),
-            [&item](const std::pair<double, Cell>& existingItem) {
-                return existingItem.second.Row == item.Row && existingItem.second.Col == item.Col;
-            });
-    }
-};
+//     void Enqueue(const Cell& item, double priority) {
+//         elements.push(std::make_pair(priority, item));
+//         elementSet.insert(item);
+//     }
 
-AStar::AStar(int** grid, int rows, int columns)
-    : grid(grid), rows(rows), columns(columns) {}
+//     Cell Dequeue() {
+//         Cell topItem = elements.top().second;
+//         elements.pop();
+//         elementSet.erase(topItem);
+//         return topItem;
+//     }
 
-AStar::~AStar() {
-    // Deallocate grid memory
-    for (int i = 0; i < rows; ++i) {
-        delete[] grid[i];
-    }
-    delete[] grid;
-}
+//     bool Contains(const Cell& item) {
+//         return elementSet.find(item) != elementSet.end();
+//     }
+// };
 
-std::vector<Cell> AStar::GetNeighbors(const Cell& cell) {
-    std::vector<Cell> neighbors = {
-        {cell.Row + 1, cell.Col},
-        {cell.Row - 1, cell.Col},
-        {cell.Row, cell.Col + 1},
-        {cell.Row, cell.Col - 1}
-    };
+// pathfinding::pathfinding(int** grid, int rows, int columns)
+//     : grid(grid), rows(rows), columns(columns) {}
 
-    neighbors.erase(std::remove_if(neighbors.begin(), neighbors.end(),
-        [this](const Cell& n) {
-            return n.Row < 0 || n.Row >= rows || n.Col < 0 || n.Col >= columns || grid[n.Row][n.Col] == 1;
-        }),
-        neighbors.end());
+// pathfinding::~pathfinding() {
+//     // Deallocate grid memory
+//     for (int i = 0; i < rows; ++i) {
+//         delete[] grid[i];
+//     }
+//     delete[] grid;
+// }
 
-    return neighbors;
-}
+// std::vector<Cell> pathfinding::GetNeighbors(const Cell& cell) {
+//     std::vector<Cell> neighbors = {
+//         {cell.Row + 1, cell.Col},
+//         {cell.Row - 1, cell.Col},
+//         {cell.Row, cell.Col + 1},
+//         {cell.Row, cell.Col - 1}
+//     };
 
-double AStar::CalculateHeuristic(const Cell& cell, const Cell& goal) {
-    return std::sqrt(std::pow(cell.Row - goal.Row, 2) + std::pow(cell.Col - goal.Col, 2));
-}
+//     neighbors.erase(std::remove_if(neighbors.begin(), neighbors.end(),
+//         [this](const Cell& n) {
+//             return n.Row < 0 || n.Row >= rows || n.Col < 0 || n.Col >= columns || grid[n.Row][n.Col] == 1;
+//         }),
+//         neighbors.end());
 
-std::vector<Cell> AStar::FindPath(const Cell& start, const Cell& goal) {
-    PriorityQueue openSet;
-    std::unordered_map<Cell, Cell> cameFrom;
-    std::unordered_map<Cell, double> gScore;
-    std::unordered_map<Cell, double> fScore;
-    std::unordered_set<Cell> closedSet;
+//     return neighbors;
+// }
 
-    openSet.Enqueue(start, 0);
-    gScore[start] = 0;
-    fScore[start] = CalculateHeuristic(start, goal);
+// double pathfinding::CalculateHeuristic(const Cell& cell, const Cell& goal) {
+//     return std::sqrt(std::pow(cell.Row - goal.Row, 2) + std::pow(cell.Col - goal.Col, 2));
+// }
 
-    while (openSet.Count() > 0) {
-        Cell current = openSet.Dequeue();
+// std::vector<Cell> pathfinding::FindPath(const Cell& start, const Cell& goal) {
+//     PriorityQueue openSet;
+//     std::unordered_map<Cell, Cell, CellHash, CellEqual> cameFrom;
+//     std::unordered_map<Cell, double, CellHash, CellEqual> gScore;
+//     std::unordered_map<Cell, double, CellHash, CellEqual> fScore;
+//     std::unordered_set<Cell, CellHash, CellEqual> closedSet;
 
-        if (current.Row == goal.Row && current.Col == goal.Col) {
-            return ReconstructPath(cameFrom, current);
-        }
+//     openSet.Enqueue(start, 0);
+//     gScore[start] = 0;
+//     fScore[start] = CalculateHeuristic(start, goal);
 
-        closedSet.insert(current);
+//     while (openSet.Count() > 0) {
+//         Cell current = openSet.Dequeue();
 
-        for (const Cell& neighbor : GetNeighbors(current)) {
-            if (closedSet.find(neighbor) != closedSet.end())
-                continue;
+//         if (current.Row == goal.Row && current.Col == goal.Col) {
+//             return ReconstructPath(cameFrom, current);
+//         }
 
-            double tentativeGScore = gScore[current] + CalculateHeuristic(current, neighbor);
 
-            if (gScore.find(neighbor) == gScore.end() || tentativeGScore < gScore[neighbor]) {
-                cameFrom[neighbor] = current;
-                gScore[neighbor] = tentativeGScore;
-                fScore[neighbor] = gScore[neighbor] + CalculateHeuristic(neighbor, goal);
+//         closedSet.insert(current);
 
-                if (!openSet.Contains(neighbor))
-                    openSet.Enqueue(neighbor, fScore[neighbor]);
-            }
-        }
-    }
+//         for (const Cell& neighbor : GetNeighbors(current)) {
+//             if (closedSet.find(neighbor) != closedSet.end())
+//                 continue;
 
-    return std::vector<Cell>();
-}
+//             double tentativeGScore = gScore[current] + CalculateHeuristic(current, neighbor);
 
-std::vector<Cell> AStar::ReconstructPath(std::unordered_map<Cell, Cell>& cameFrom, Cell current) {
-    std::vector<Cell> path = { current };
+//             if (gScore.find(neighbor) == gScore.end() || tentativeGScore < gScore[neighbor]) {
+//                 cameFrom[neighbor] = current;
+//                 gScore[neighbor] = tentativeGScore;
+//                 fScore[neighbor] = gScore[neighbor] + CalculateHeuristic(neighbor, goal);
 
-    while (cameFrom.find(current) != cameFrom.end()) {
-        current = cameFrom[current];
-        path.push_back(current);
-    }
+//                 if (!openSet.Contains(neighbor))
+//                     openSet.Enqueue(neighbor, fScore[neighbor]);
+//             }
+//         }
+//     }
 
-    std::reverse(path.begin(), path.end());
-    return path;
-}
+//     return std::vector<Cell>();
+// }
+
+// std::vector<Cell> pathfinding::ReconstructPath(std::unordered_map<Cell, Cell, CellHash, CellEqual>& cameFrom, Cell current) 
+// {
+//     std::vector<Cell> path = { current };
+
+//     while (cameFrom.find(current) != cameFrom.end()) {
+//         current = cameFrom[current];
+//         path.push_back(current);
+//     }
+
+//     std::reverse(path.begin(), path.end());
+//     return path;
+// }

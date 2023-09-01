@@ -17,7 +17,7 @@
 
 Sensor::Sensor() {
     // Initialize ROS environment
-    rosEnv.simulate();
+    // rosEnv.simulate();
 }
 
 void Sensor::simulateEnvironments(){

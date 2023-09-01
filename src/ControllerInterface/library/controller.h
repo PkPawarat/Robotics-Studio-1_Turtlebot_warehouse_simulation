@@ -20,7 +20,7 @@
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
 
-class Controller : ControllerInterface {
+class Controller : public ControllerInterface {
     private:
         Sensor sensor;
         bool targetDetected;
@@ -29,13 +29,13 @@ class Controller : ControllerInterface {
 
     public:
         Controller();
-        void Execute();
-        void CheckTarget();
-        void AssignTarget(const std::string& target);
-        void CheckQRCode();
-        void DriveTo(const std::string& location);
-        void PickUpTarget();
-        void DropTarget();
+        virtual void Execute();
+        virtual void CheckTarget();
+        virtual void AssignTarget(const std::string& target);
+        virtual void CheckQRCode();
+        virtual void DriveTo(const std::string& location);
+        virtual void PickUpTarget();
+        virtual void DropTarget();
     };
 
 #endif // CONTROLLER
