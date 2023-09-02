@@ -47,4 +47,11 @@ Instruction how to use Ros, Gazebo, TurtleBot3
         ▪ roslaunch rtabmap_demos
         ▪ demo_turtlebot3_navigation.launch
 
+## NOTICE: when pull this project from git delete Build folder then do this command in terminal (need to do everytime)
+Create Cmake build
+
+    mkdir build
+    cd build/
+    cmake ..
+    make
 
