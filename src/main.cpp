@@ -151,7 +151,7 @@ std::string trim(const std::string& s) {
 
 int main() {
     // Replace "your_excel_file.xlsx" with the path to your Excel file
-    std::string excelFilePath = "/home/pawarat/Robotics-Studio-1/PlatLocation1.csv";
+    std::string excelFilePath = "/home/pawarat/Robotics-Studio-1/ExcelFile/PlatLocation1.csv";
 
     // Create an instance of the platFinding class
     platFinding pathFinder(excelFilePath);

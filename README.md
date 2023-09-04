@@ -47,6 +47,11 @@ Instruction how to use Ros, Gazebo, TurtleBot3
         ▪ roslaunch rtabmap_demos
         ▪ demo_turtlebot3_navigation.launch
 
+
+    Mapping saver
+        sudo apt install ros-noetic-map-server
+        rosrun map_server map_saver -f ~/map
+
 ## NOTICE: when pull this project from git delete Build folder then do this command in terminal (need to do everytime)
 Create Cmake build
 
