@@ -1,8 +1,0 @@
-prefix=/home/pawarat/Robotics-Studio-1/build/devel
-
-Name: Robotic_Studio_1
-Description: Description of Robotic_Studio_1
-Version: 0.0.1
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

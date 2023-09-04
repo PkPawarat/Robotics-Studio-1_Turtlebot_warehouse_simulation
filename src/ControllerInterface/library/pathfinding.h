@@ -1,56 +1,77 @@
-#ifndef PATHFINDING
-#define PATHFINDING
+#ifndef PATHFINDING_H
+#define PATHFINDING_H
+
 #include <vector>
 #include <unordered_map>
-#include <unordered_set>
-
-// Keep only the headers needed
+#include <iostream>
 #include <vector>
-#include "pfms_types.h"
-#include "ros/ros.h"
-#include <atomic>
-#include <mutex>
+#include <queue>
+#include <map>  // Include the <map> header for std::map
+#include <set>  // Include the <set> header for std::set
+#include <cmath>
+#include <algorithm>
 
-#include "visualization_msgs/MarkerArray.h"
-#include "std_srvs/SetBool.h"
-#include "nav_msgs/Odometry.h"
-#include "sensor_msgs/Range.h"
-#include "sensor_msgs/LaserScan.h"
-#include "geometry_msgs/PoseArray.h"
+#include <iostream>
+#include <fstream>
+#include <sstream> // Include this for std::stringstream
+#include <string>
+#include <vector>
+
 
 struct Cell {
-    int Row;
-    int Col;
+    int row;
+    int col;
 };
 
-struct CellHash {
-    std::size_t operator()(const Cell& cell) const {
-        // Combine the hash codes of the Row and Col members
-        return std::hash<int>()(cell.Row) ^ std::hash<int>()(cell.Col);
-    }
-};
-
-struct CellEqual {
+struct CellCompare {
     bool operator()(const Cell& lhs, const Cell& rhs) const {
-        return lhs.Row == rhs.Row && lhs.Col == rhs.Col;
+        return std::tie(lhs.row, lhs.col) < std::tie(rhs.row, rhs.col);
     }
 };
 
-class pathfinding {
-    private:
-        int** grid;
-        int rows;
-        int columns;
+struct CostCellPair {
+    double cost;
+    Cell cell;
 
-    public:
-        pathfinding(int** grid, int rows, int columns);
-        ~pathfinding();
-        
-        std::vector<Cell> FindPath(const Cell& start, const Cell& goal);
+    CostCellPair(double _cost, const Cell& _cell) : cost(_cost), cell(_cell) {}
 
-    private:
-        std::vector<Cell> GetNeighbors(const Cell& cell);
-        double CalculateHeuristic(const Cell& cell, const Cell& goal);
-        std::vector<Cell> ReconstructPath(std::unordered_map<Cell, Cell, CellHash, CellEqual>& cameFrom, Cell current);
+    bool operator>(const CostCellPair& other) const {
+        return cost > other.cost;
+    }
+
+    bool operator<(const CostCellPair& other) const {
+        return cost < other.cost;
+    }
 };
-#endif // PATHFINDING
+
+class platFinding {
+private:
+    // std::vector<std::vector<int>> grid;
+    int rows;
+    int columns;
+
+    // std::vector<Cell> GetNeighbors(Cell cell);
+    // double CalculateHeuristic(Cell cell, Cell goal);
+    // std::vector<Cell> ReconstructPath(std::map<Cell, Cell, CellCompare> cameFrom, Cell current);
+
+public:
+    platFinding(const std::string& excelFilePath);
+    std::vector<Cell> FindPath(Cell start, Cell goal);
+
+
+    std::vector<Cell> GetNeighbors(Cell cell);
+
+    double CalculateHeuristic(Cell cell, Cell goal);
+
+
+    std::vector<Cell> ReconstructPath(std::map<Cell, Cell, CellCompare> cameFrom, Cell current) ;
+  
+    std::vector<std::vector<int>> grid;
+
+    std::string convertCellValue(const std::string& cellValue); // Add the function here
+
+    int symbolToInt(const std::string& symbol);
+
+};
+
+#endif // PATHFINDING_H
