@@ -52,6 +52,20 @@ Instruction how to use Ros, Gazebo, TurtleBot3
         sudo apt install ros-noetic-map-server
         rosrun map_server map_saver -f ~/map
 
+
+
+        use map in gazebo
+
+        sudo apt install ros-noetic-turtlebot3-navigation
+        sudo apt install ros-noetic-navigation
+        
+        export TURTLEBOT3_MODEL=waffle
+        roslaunch turtlebot3_gazebo turtlebot3_world.launch
+        roslaunch turtlebot3_navigation turtlebot3_navigation.launch map_file:=$HOME/map.yaml
+
+        in rviz if the location of the robot is differ from gazebo use 2D Pose Estimate in the Rviz on the top bar to indicate estimate location & rotation of the robot. 
+
+
 ## NOTICE: when pull this project from git delete Build folder then do this command in terminal (need to do everytime)
 Create Cmake build
 
