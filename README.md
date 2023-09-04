@@ -5,50 +5,65 @@
 
 Instruction how to use Ros, Gazebo, TurtleBot3
 
-    • Run Gazebo environment.
-        ◦ roslaunch gazebo_ros “Launch file name”
-    • Run Turtlebot3 environment command:
-        ◦ Launch Turtlebot3 with house.
-            ▪ export TURTLEBOT3_MODEL=waffle_pi
-            ▪ roslaunch turtlebot3_gazebo turtlebot3_house.launch 
-        ◦ Launch teleoperate the TurtleBot3 with keyboard (Separate terminal). 
-            ▪ export TURTLEBOT3_MODEL=waffle_pi
-            ▪ roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
-        ◦ Launch rviz for Turtlebot3 in order to see the laser scan (Separate terminal). 
-            ▪ roslaunch turtlebot3_gazebo turtlebot3_gazebo_rviz.launch
-        ◦ Launch plot odometry using rqt_plot (Separate terminal).
-            ▪ rqt_plot
+- Run Gazebo environment.
+    
+        roslaunch gazebo_ros “Launch file name”
 
-                rqt_plot need to assign a topic of the simulation that is runing such as /odom/pose/pose/position
-        ◦ TurtleBot3 also include a teleoperate
-            c roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
-        
+- Run Turtlebot3 environment command:
+    - Launch Turtlebot3 with house.
+            
+            export TURTLEBOT3_MODEL=waffle_pi
+            roslaunch turtlebot3_gazebo turtlebot3_house.launch 
 
-        ◦ check imu by. this is checking that turtlebot have launch a topic into note.
+    - Launch teleoperate the TurtleBot3 with keyboard (Separate terminal). 
+            
+            export TURTLEBOT3_MODEL=waffle_pi
+            roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
+
+    - Launch rviz for Turtlebot3 in order to see the laser scan (Separate terminal). 
+
+            roslaunch turtlebot3_gazebo turtlebot3_gazebo_rviz.launch
+
+    - Launch plot odometry using rqt_plot (Separate terminal).
+
+            rqt_plot
+
+            rqt_plot need to assign a topic of the simulation that is runing such as /odom/pose/pose/position
+
+    ◦ TurtleBot3 also include a teleoperate
+
+            roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
+    
+
+    ◦ check imu by. this is checking that turtlebot have launch a topic into note.
+
             rostopic echo /imu
 
 
 
-    - Mapping : Grid mapping
+- Mapping : Grid mapping
 
         ▪ export TURTLEBOT3_MODEL=waffle
         ▪ roslaunch turtlebot3_gazebo turtlebot3_world.launch
         ▪ roslaunch turtlebot3_slam turtlebot3_slam.launch slam_methods:=gmapping
-        To move around
+
+- To move around
+
         ▪ roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
 
-    - Mapping :RTAB-MAP
+- Mapping ~:RTAB-MAP
 
-        ▪ export TURTLEBOT3_MODEL=waffle
-        ▪ roslaunch turtlebot3_gazebo
-        ▪ turtlebot3_world.launch
+        export TURTLEBOT3_MODEL=waffle
+        roslaunch turtlebot3_gazebo
+        turtlebot3_world.launch
 
-        ▪ export TURTLEBOT3_MODEL=waffle
-        ▪ roslaunch rtabmap_demos
-        ▪ demo_turtlebot3_navigation.launch
+        export TURTLEBOT3_MODEL=waffle
+        roslaunch rtabmap_demos
+        demo_turtlebot3_navigation.launch
 
 
-    Mapping saver
+- Mapping saver
+
         sudo apt install ros-noetic-map-server
         rosrun map_server map_saver -f ~/map
 
@@ -63,7 +78,39 @@ Instruction how to use Ros, Gazebo, TurtleBot3
         roslaunch turtlebot3_gazebo turtlebot3_world.launch
         roslaunch turtlebot3_navigation turtlebot3_navigation.launch map_file:=$HOME/map.yaml
 
-        in rviz if the location of the robot is differ from gazebo use 2D Pose Estimate in the Rviz on the top bar to indicate estimate location & rotation of the robot. 
+in rviz if the location of the robot is differ from gazebo use 2D Pose Estimate in the Rviz on the top bar to indicate estimate location & rotation of the robot. 
+
+To create a new branch in a Git repository, you can use the `git branch` command. Here are the steps to create a new branch:
+1. Open a terminal window.
+2. Navigate to the directory of your Git repository using the `cd` command. If you're not already in the repository's directory, you need to navigate to it first.
+
+        cd /path/to/your/repository
+
+3. Make sure you are on the branch from which you want to create a new branch. You can check your current branch using the `git branch` command. The branch with an asterisk (*) next to it is your current branch.
+
+        git branch
+
+4. To create a new branch, use the following command. Replace `new_branch_name` with the name you want to give to your new branch.
+
+        git branch new_branch_name
+
+- For example, if you want to create a branch named "feature-branch," you would run:
+
+        git branch feature-branch
+
+5. To switch to the newly created branch, you can use the `git checkout` command:
+
+        git checkout new_branch_name
+
+- Alternatively, you can use the shorthand command to create and switch to a new branch in one step:
+
+        git checkout -b new_branch_name
+
+- For example:
+
+        git checkout -b feature-branch
+
+Now, you have successfully created a new branch and switched to it. You can start working on your new branch, making changes, and committing them independently of the main branch or any other existing branch. Remember to commit your changes when you're ready, and you can push the new branch to a remote repository using `git push` if needed.
 
 
 ## NOTICE: when pull this project from git delete Build folder then do this command in terminal (need to do everytime)
