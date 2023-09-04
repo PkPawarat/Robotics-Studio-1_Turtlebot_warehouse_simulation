@@ -13,13 +13,20 @@
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
 
-class ROSNode{
-ROSNode(ros::NodeHandle nh)  {};
+class ROSNode
+{
+public:
+    ROSNode(ros::NodeHandle nh){};
 
+    void simulate();
+    void odomCallBack(const nav_msgs::OdometryConstPtr &msg);
+    void sendCmd(int x, int y);
 
-void simulate();
-void odomCallBack(const nav_msgs::OdometryConstPtr &msg);
-void sendCmd(int x, int y);
+public:
+    ros::NodeHandle nh_;
+    ros::Subscriber odom;
+    ros::Publisher pub_vel;
 
+    nav_msgs::Odometry bot_odom;
 
 };
