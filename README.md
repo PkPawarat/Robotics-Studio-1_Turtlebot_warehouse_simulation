@@ -37,6 +37,9 @@ Instruction how to use Ros, Gazebo, TurtleBot3
         To move around
         ▪ roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
 
+        To capture map with save in  .pgm and .yaml which will be store in catkin folder.
+        - rosrun map_server map_saver
+
     - Mapping :RTAB-MAP
 
         ▪ export TURTLEBOT3_MODEL=waffle
@@ -48,3 +51,4 @@ Instruction how to use Ros, Gazebo, TurtleBot3
         ▪ demo_turtlebot3_navigation.launch
 
 
+        learn from : https://emanual.robotis.com/docs/en/platform/turtlebot3/nav_simulation/
