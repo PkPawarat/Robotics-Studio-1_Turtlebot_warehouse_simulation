@@ -1,0 +1,13 @@
+0,0,0,0,0,0,0,0,0,0,0,0,0
+0,P D,P D,P D,P D,P D,P D,P D,P D,P D,P D,P D,0
+0,U&D,U&D&L,U&D&L,U&D&L,U&D&L,L&R,U&D&R,U&D&R,U&D&R,U&D&R,U&D,0
+0,D,P U,P U,P U,P U,U,P U,P U,P U,P U,D,0
+C R,D&L,P D,P D,P D,P D,U,P D,P D,P D,P D,D&R,C L
+0,D,U&D&L,U&D&L,U&D&L,U&D&L,U&L&R,U&D&R,U&D&R,U&D&R,U&D&R,D,0
+C R,D&L,P U,P U,P U,P U,U,P U,P U,P U,P U,D&R,C L
+0,D,P D,P D,P D,P D,U,P D,P D,P D,P D,D,0
+C R,D&L,U&D&L,U&D&L,U&D&L,U&D&L,U&L&R,U&D&R,U&D&R,U&D&R,U&D&R,D&R,C L
+0,D,P U,P U,P U,P U,U,P U,P U,P U,P U,D,0
+0,D&R,R,R,D&R,R,U,L,D&L,L,L,D&L,0
+0,R,W R,U,R,W R,U,W L,L,U,W L,L,0
+0,0,1,0,0,1,0,1,0,0,1,0,0
