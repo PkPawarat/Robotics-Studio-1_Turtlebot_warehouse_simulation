@@ -7,7 +7,7 @@
 
   <!-- Launch your custom world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find my_custom_world_gazebo)/worlds/compact_warehouse.world"/>
+    <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/compact_warehouse.world"/>
 
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
