@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -std=c++11  -Wno-deprecated -Wdeprecated-declarations -g  -shared -Wl,-soname,librobotics-Studio-1_pathfinding.so -o devel/lib/librobotics-Studio-1_pathfinding.so CMakeFiles/robotics-Studio-1_pathfinding.dir/src/ControllerInterface/pathfinding.cpp.o 
