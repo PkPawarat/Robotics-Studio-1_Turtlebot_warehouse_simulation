@@ -8,7 +8,6 @@
 
 // Keep only the headers needed
 #include <vector>
-// #include "pfms_types.h"
 #include "ros/ros.h"
 #include <atomic>
 #include <mutex>
@@ -29,6 +28,7 @@ class Controller : public ControllerInterface {
 
     public:
         Controller();
+        virtual void SetTargets(std::vector<geometry_msgs::Point>);
         virtual void Execute();
         virtual void CheckTarget();
         virtual void AssignTarget(const std::string& target);
@@ -36,6 +36,18 @@ class Controller : public ControllerInterface {
         virtual void DriveTo(const std::string& location);
         virtual void PickUpTarget();
         virtual void DropTarget();
+
+        virtual void RePerentObject();
+
+        
+    protected:
+        struct TargetStats {
+            geometry_msgs::Point location; //! location of goal
+            double distance; //! distance to goal
+            double time; //! time to goal
+        };
+        std::vector<TargetStats> Targets;
+        
     };
 
 #endif // CONTROLLER

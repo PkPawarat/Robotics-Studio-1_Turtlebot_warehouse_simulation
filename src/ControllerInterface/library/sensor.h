@@ -1,10 +1,8 @@
 #pragma once
-#include "ROSEnvironment.h"
+#include "ROSNode.h"
 
 // Keep only the headers needed
 #include <vector>
-// #include "pfms_types.h"
-// #include "ros/ros.h"
 #include <atomic>
 #include <mutex>
 

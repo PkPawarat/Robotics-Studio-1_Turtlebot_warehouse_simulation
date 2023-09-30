@@ -1,3 +1,6 @@
+#ifndef ROSNODE_H
+#define ROSNODE_H
+
 #include <iostream>
 
 // Keep only the headers needed
@@ -15,18 +18,19 @@
 
 class ROSNode
 {
-public:
-    ROSNode(ros::NodeHandle nh){};
+    public:
+        ROSNode(ros::NodeHandle nh){};
 
-    void simulate();
-    void odomCallBack(const nav_msgs::OdometryConstPtr &msg);
-    void sendCmd(int x, int y);
+        void simulate();
+        void odomCallBack(const nav_msgs::OdometryConstPtr &msg);
+        void sendCmd(int x, int y);
 
-public:
-    ros::NodeHandle nh_;
-    ros::Subscriber odom;
-    ros::Publisher pub_vel;
+    public:
+        ros::NodeHandle nh_;
+        ros::Subscriber odom;
+        ros::Publisher pub_vel;
 
-    nav_msgs::Odometry bot_odom;
+        nav_msgs::Odometry bot_odom;
 
 };
+#endif  // ROSNODE_H
