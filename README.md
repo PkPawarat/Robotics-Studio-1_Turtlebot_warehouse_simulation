@@ -51,7 +51,14 @@ Instruction how to use Ros, Gazebo, TurtleBot3
 
         ▪ roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
 
+<<<<<<< HEAD
+        To capture map with save in  .pgm and .yaml which will be store in catkin folder.
+        - rosrun map_server map_saver
+
+    - Mapping :RTAB-MAP
+=======
 - Mapping ~:RTAB-MAP
+>>>>>>> 6011c97d7538a81965c1339163000ff701ca0822
 
         export TURTLEBOT3_MODEL=waffle
         roslaunch turtlebot3_gazebo
@@ -128,3 +135,4 @@ Create Cmake build
     cmake ..
     make
 
+        learn from : https://emanual.robotis.com/docs/en/platform/turtlebot3/nav_simulation/
