@@ -16,6 +16,9 @@
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
 
+#include <ros/ros.h>
+#include <move_base_msgs/MoveBaseGoal.h>
+
 class ROSNode
 {
     public:
@@ -24,13 +27,25 @@ class ROSNode
         void simulate();
         void odomCallBack(const nav_msgs::OdometryConstPtr &msg);
         void sendCmd(int x, int y);
+        void cameraCallBack(const sensor_msgs::LaserScanConstPtr &msg);
+        void lidarCallBack(const sensor_msgs::LaserScanConstPtr &msg);
+
+        void sendGoal(double x, double y, double z);
 
     public:
         ros::NodeHandle nh_;
         ros::Subscriber odom;
+        ros::Subscriber camera;
+        ros::Subscriber lidarSensor;
         ros::Publisher pub_vel;
+        ros::Publisher pub_goal;
 
         nav_msgs::Odometry bot_odom;
+        sensor_msgs::LaserScan lidar_sensor;
+        sensor_msgs::LaserScan camera_;     // need to change to something else
 
+        std::mutex robotMtx_;
+        
+        move_base_msgs::MoveBaseGoal base_goal;
 };
 #endif  // ROSNODE_H

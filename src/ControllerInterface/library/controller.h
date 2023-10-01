@@ -47,7 +47,7 @@ class Controller : public ControllerInterface {
             double time; //! time to goal
         };
         std::vector<TargetStats> Targets;
-        
+
     };
 
 #endif // CONTROLLER

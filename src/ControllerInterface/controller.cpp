@@ -1,4 +1,5 @@
 #include "library/controller.h" 
+#include "library/ROSNode.h" 
 #include <iostream>
 
 // Keep only the headers needed
@@ -20,7 +21,6 @@ Controller::Controller() :
     qrCodeDetected(false)
     {
     Targets.clear();
-
     }
 
 void Controller::Execute() {
@@ -41,6 +41,7 @@ void Controller::Execute() {
         std::cout << "No target detected." << std::endl;
     }
 }
+
 /// @brief set the target to Targets global variable, only use the location of the tagets.
 /// @param targets 
 void Controller::SetTargets(std::vector<geometry_msgs::Point> targets){
@@ -53,6 +54,7 @@ void Controller::SetTargets(std::vector<geometry_msgs::Point> targets){
 void Controller::CheckTarget() {
     targetDetected = true; // Placeholder logic, replace with actual detection logic
 
+    
     // checking the current location of the robot with current location of target object if it in the correct location set targetDetected to true
 }
 
