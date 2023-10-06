@@ -22,7 +22,7 @@
 class ROSNode
 {
     public:
-        ROSNode(ros::NodeHandle nh){};
+        ROSNode(ros::NodeHandle nh);
 
         void simulate();
         void odomCallBack(const nav_msgs::OdometryConstPtr &msg);
@@ -30,7 +30,7 @@ class ROSNode
         void cameraCallBack(const sensor_msgs::LaserScanConstPtr &msg);
         void lidarCallBack(const sensor_msgs::LaserScanConstPtr &msg);
 
-        void sendGoal(double x, double y, double z);
+        void sendGoal(geometry_msgs::PoseStamped goal);
 
     public:
         ros::NodeHandle nh_;
