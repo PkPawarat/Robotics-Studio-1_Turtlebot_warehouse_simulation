@@ -35,6 +35,7 @@ void ROSNode::odomCallBack(const nav_msgs::OdometryConstPtr &msg){  //Type: nav_
     // robotMtx_.lock();
     bot_odom = *msg;
 
+    //Testing sendGoal
     nav_msgs::Odometry newODOM = bot_odom;
     newODOM.pose.pose.position.x += 0.5;
     newODOM.pose.pose.position.y += 0.5;
