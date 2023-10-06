@@ -136,3 +136,26 @@ Create Cmake build
     make
 
         learn from : https://emanual.robotis.com/docs/en/platform/turtlebot3/nav_simulation/
+
+
+### Documentation
+
+In source documentation is a must, we will examine all code submitted for supporting documentation. You also need the dox file (mainpage.dox) to indicate how the code will run/behave. You need to modiy the mainpage.dox included which does not have any specific documentation.
+
+In ROS, doxygen documentation in generated using the `rosdoc_lite` tool. If you do not have the tool you can install it via `sudo apt-get install ros-noetic-rosdoc-lite` (replace noetic with melodic if on 18.04)
+
+To generate the documentation'
+
+```bash
+cd ~/catkin_ws/src/Robotics-Studio-1
+rosdoc_lite .
+```
+
+You will find the documentation inside doc folder.
+
+```bash
+firefox ~/catkin_ws/src/Robotics-Studio-1/doc/html/index.html 
+```
+
+
+

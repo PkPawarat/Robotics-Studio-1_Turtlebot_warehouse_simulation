@@ -11,65 +11,39 @@
 
 
 
-void printGrid(const std::vector<std::vector<int>>& grid, const std::vector<Cell>& path = std::vector<Cell>()) {
-    // Create a copy of the grid to mark the path
-    std::vector<std::vector<std::string>> pathGrid(grid.size(), std::vector<std::string>(grid[0].size()));
+#include <ros/ros.h>
+#include <nav_msgs/Odometry.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
 
-    for (size_t i = 0; i < pathGrid.size(); i++) {
-        for (size_t j = 0; j < pathGrid[0].size(); j++) {
-            pathGrid[i][j] = std::to_string(grid[i][j]); // Initialize with obstacles or empty spaces
-        }
-    }
+ros::Publisher initialPosePublisher;
 
-    for (const Cell& cell : path) {
-        pathGrid[cell.row][cell.col] = "*"; // Mark path cells with asterisk
-    }
+void odomCallback(const nav_msgs::Odometry::ConstPtr& odomMsg) {
+    // Create a message to publish to /initialpose
+    geometry_msgs::PoseWithCovarianceStamped initialPoseMsg;
+    
+    // Extract relevant data from the odomMsg and set it in initialPoseMsg
+    initialPoseMsg.pose.pose = odomMsg->pose.pose;
+    
+    // Publish the initial pose message
+    initialPosePublisher.publish(initialPoseMsg);
 
-    // Print the path-marked grid
-    for (size_t i = 0; i < pathGrid.size(); i++) {
-        for (size_t j = 0; j < pathGrid[0].size(); j++) {
-            std::cout << pathGrid[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
+    // Unsubscribe after receiving one message
+    ros::topic::waitForMessage<nav_msgs::Odometry>("/odom", ros::Duration(1.0)); // Wait for one message
+    ros::shutdown();
 }
 
-// Function to trim leading and trailing spaces from a string
-std::string trim(const std::string& s) {
-    size_t start = s.find_first_not_of(" \t\r\n");
-    size_t end = s.find_last_not_of(" \t\r\n");
-    if (start == std::string::npos || end == std::string::npos) {
-        // String is empty or contains only spaces
-        return "";
-    }
-    return s.substr(start, end - start + 1);
-}
+int main(int argc, char** argv) {
+    ros::init(argc, argv, "odom_to_initialpose");
+    ros::NodeHandle nh;
 
+    // Create a subscriber for the /odom topic
+    ros::Subscriber odomSubscriber = nh.subscribe("/odom", 1, odomCallback);
 
-int main() {
-    // Replace "your_excel_file.xlsx" with the path to your Excel file
-    std::string excelFilePath = "/home/pk/git/Robotics-Studio-1/ExcelFile/PlatLocation1.csv";
-    // /home/pk/git/Robotics-Studio-1/ExcelFile
-    // /home/pawarat/git/Robotics-Studio-1/ExcelFile
+    // Create a publisher for the /initialpose topic
+    initialPosePublisher = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/initialpose", 1);
 
-    // Create an instance of the platFinding class
-    platFinding pathFinder(excelFilePath);
+    // Spin to process incoming messages
+    ros::spin();
 
-    // Define the start and goal cells
-    Cell start = {0, 0};
-    Cell goal = {5, 5};
-
-    // Find the path from start to goal
-    std::vector<Cell> path = pathFinder.FindPath(start, goal);
-
-    // Print the path
-    std::cout << "Path from (" << start.row << "," << start.col << ") to (" << goal.row << "," << goal.col << "):" << std::endl;
-    for (const Cell& cell : path) {
-        std::cout << "(" << cell.row << "," << cell.col << ") ";
-    }
-    std::cout << std::endl;
-
-    printGrid(pathFinder.grid);
     return 0;
 }
-
