@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.1)
-project(robotics-Studio-1)
+project(robotics-studio-1)
 
 # This pacakge depends on a5_setup, beacuse it uses a service declared there
 find_package(catkin REQUIRED COMPONENTS
@@ -54,9 +54,12 @@ include_directories(
 add_library(${PROJECT_NAME}_sensor src/ControllerInterface/Sensor.cpp)
 add_library(${PROJECT_NAME}_controller src/ControllerInterface/controller.cpp)
 add_library(${PROJECT_NAME}_pathfinding src/ControllerInterface/pathfinding.cpp)
+add_library(${PROJECT_NAME}_rosnode src/ControllerInterface/ROSNode.cpp)
 
 ## Declare a C++ executable
-add_executable(${PROJECT_NAME}_sample src/main.cpp src/ControllerInterface/controller.cpp src/ControllerInterface/Sensor.cpp src/ControllerInterface/pathfinding.cpp)
+add_executable(${PROJECT_NAME}_sample src/main.cpp src/ControllerInterface/controller.cpp src/ControllerInterface/Sensor.cpp src/ControllerInterface/pathfinding.cpp src/ControllerInterface/ROSNode.cpp)
+
+target_link_libraries(robotics-studio-1_sample ${catkin_LIBRARIES})
 
 # Add cmake target dependencies of the executable
 # This enforces generating messages before building these executables

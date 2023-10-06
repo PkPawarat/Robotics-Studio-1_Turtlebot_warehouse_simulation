@@ -48,6 +48,8 @@ class Controller : public ControllerInterface {
         };
         std::vector<TargetStats> Targets;
 
+        geometry_msgs::PoseStamped Goal;
+
     };
 
 #endif // CONTROLLER
