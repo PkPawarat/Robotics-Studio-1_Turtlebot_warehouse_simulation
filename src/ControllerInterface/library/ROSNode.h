@@ -18,6 +18,13 @@
 
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseGoal.h>
+/**
+ * @file ROSNode.h
+ * @brief Definition of the ROSNode class for ROS-based simulation.
+ * @author Pawarat Phatthanaphusakun
+ * @version   1.01
+ * @date      2023-08-28
+ */
 
 class ROSNode
 {
