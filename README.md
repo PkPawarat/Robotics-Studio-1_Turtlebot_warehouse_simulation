@@ -51,14 +51,10 @@ Instruction how to use Ros, Gazebo, TurtleBot3
 
         ▪ roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
 
-<<<<<<< HEAD
         To capture map with save in  .pgm and .yaml which will be store in catkin folder.
         - rosrun map_server map_saver
 
     - Mapping :RTAB-MAP
-=======
-- Mapping ~:RTAB-MAP
->>>>>>> 6011c97d7538a81965c1339163000ff701ca0822
 
         export TURTLEBOT3_MODEL=waffle
         roslaunch turtlebot3_gazebo
@@ -120,6 +116,13 @@ To create a new branch in a Git repository, you can use the `git branch` command
 Now, you have successfully created a new branch and switched to it. You can start working on your new branch, making changes, and committing them independently of the main branch or any other existing branch. Remember to commit your changes when you're ready, and you can push the new branch to a remote repository using `git push` if needed.
 
 
+
+## Using our world 
+
+        roslaunch turtlebot3_gazebo final_warehouse.launch
+        
+
+
 ## NOTICE: when pull this project from git delete Build folder then do this command in terminal (need to do everytime)
 Create Cmake build
 
@@ -129,3 +132,26 @@ Create Cmake build
     make
 
         learn from : https://emanual.robotis.com/docs/en/platform/turtlebot3/nav_simulation/
+
+
+### Documentation
+
+In source documentation is a must, we will examine all code submitted for supporting documentation. You also need the dox file (mainpage.dox) to indicate how the code will run/behave. You need to modiy the mainpage.dox included which does not have any specific documentation.
+
+In ROS, doxygen documentation in generated using the `rosdoc_lite` tool. If you do not have the tool you can install it via `sudo apt-get install ros-noetic-rosdoc-lite` (replace noetic with melodic if on 18.04)
+
+To generate the documentation'
+
+```bash
+cd ~/catkin_ws/src/Robotics-Studio-1
+rosdoc_lite .
+```
+
+You will find the documentation inside doc folder.
+
+```bash
+firefox ~/catkin_ws/src/Robotics-Studio-1/doc/html/index.html 
+```
+
+
+
