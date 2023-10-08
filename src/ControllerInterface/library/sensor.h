@@ -1,10 +1,8 @@
 #pragma once
-#include "ROSEnvironment.h"
+#include "ROSNode.h"
 
 // Keep only the headers needed
 #include <vector>
-// #include "pfms_types.h"
-// #include "ros/ros.h"
 #include <atomic>
 #include <mutex>
 
@@ -15,6 +13,13 @@
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
 
+/**
+ * @file Sensor.h
+ * @brief Definition of the Sensor class for Sensor simulation.
+ * @author Pawarat Phatthanaphusakun
+ * @version   1.01
+ * @date      2023-08-28
+ */
 
 class Sensor {
 private:

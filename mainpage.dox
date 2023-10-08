@@ -1,0 +1,60 @@
+/**
+ * @mainpage Autonomous Supply Chain Management Robot
+ *
+ * @image html Warehouse.png
+ *
+ * @section intro_sec Introduction
+ *
+ * Welcome to the documentation for the Autonomous Supply Chain Management Robot project.
+ * This project is dedicated to developing advanced autonomous robots with the potential
+ * to revolutionize the way goods are moved, tracked, and managed within factory settings.
+ * By harnessing the power of robotics and automation, our goal is to enhance efficiency,
+ * reduce manual labor, and significantly improve the accuracy of inventory management.
+ *
+ * @section features_sec Key Features
+ *
+ * - Supply Chain Logistics: Our robots are meticulously designed to optimize supply chain
+ *   logistics, ensuring the seamless and efficient movement of products within the factory.
+ *
+ * - Mapping and Localization: This project integrates cutting-edge mapping and localization
+ *   algorithms, enabling robots to autonomously navigate their environments with precision.
+ *
+ * - Real-Time Data Collection: Equipped with a diverse range of sensors and cameras, our
+ *   robots provide real-time data on the factory environment, product status, and inventory
+ *   levels.
+ *
+ * - Labor Reduction: By automating manual labor activities, our robots contribute to the
+ *   reduction of workplace injuries, alleviate labor shortages, and elevate overall factory
+ *   productivity.
+ *
+ * @section usage_sec Usage
+ *
+ * This documentation serves as a comprehensive resource for developers, engineers, and
+ * researchers engaged in the development, maintenance, and integration of autonomous robots
+ * for supply chain management. You will find detailed class documentation, code examples,
+ * and best practices for working with our robot control system.
+ *
+ * @section contact_sec Contact Information
+ *
+ * If you have questions, feedback, or collaboration inquiries related to this project, please
+ * feel free to contact us at Pawarat.Phatthanaphusakun-1@student.uts.edu.au.
+ *
+ * @section license_sec License
+ *
+ * This project is open-source and subject to the terms of the Pawarat Phatthanaphusakun.
+ * You can find the project's source code and licensing information in the repository linked below:
+ *
+ * Project Repository: [https://github.com/PkPawarat/Robotics-Studio-1.git](https://github.com/PkPawarat/Robotics-Studio-1.git)
+ *
+ * @section acknowledgements_sec Acknowledgments
+ *
+ * We would like to express our gratitude to all contributors, researchers, and developers who
+ * have made this project possible. Your dedication to advancing robotics technology is greatly
+ * appreciated.
+ *
+ * @section author_sec Author Information
+ *
+ * - Author: Pawarat Phatthanaphusakun
+ * - Student ID: 13662352
+ * - Email: Pawarat.Phatthanaphusakun-1@student.uts.edu.au
+ */
