@@ -18,10 +18,13 @@
 
 Controller::Controller() : 
     targetDetected(false), 
-    qrCodeDetected(false)
+    qrCodeDetected(false), 
+    obstacleDetected(false), 
+    batteryLevel(true) 
     {
-    Targets.clear();
+      Targets.clear();
     }
+
 
 void Controller::Execute() {
     //TODO add more requirements
@@ -39,6 +42,22 @@ void Controller::Execute() {
         }
     } else {
         std::cout << "No target detected." << std::endl;
+    }
+
+    CheckObstacle();
+    if (obstacleDetected = true){
+        Stop();
+        std::cout << "Obstacle in Path. Program Treminated." << std::endl;
+    } else {
+        std::cout << "Path Clear" << std::endl;
+    }
+
+    CheckBattery();
+    if(batteryLevel = true){
+        std::cout << "Sufficient Battery Level." << std::endl;
+    } else {
+        Charge();
+        std::cout << "Battery Low. Returning to Charging Bay" << std::endl;
     }
 }
 
@@ -89,6 +108,30 @@ void Controller::DropTarget() {
     // Add drop logic here
 }
 
+void Controller::Stop() {
+    std::cout << "Program Terminated" << std::endl;
+    // Add drop logic here
+}
+
+void Controller::CheckObstacle() {
+    if(LIDARreading = true){
+        obstacleDetected = true
+    } else {
+        obstacleDetected = false
+    }
+}
+
+void Controller::CheckBattery() {
+    if(battery > 20){
+        batteryLevel = true
+    } else {
+        batteryLevel = false
+    }
+}
+
+void Controller::Charge() {
+    // Add logic here
 void Controller::RePerentObject(){
+
 
 }
