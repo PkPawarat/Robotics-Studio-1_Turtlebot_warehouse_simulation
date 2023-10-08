@@ -59,4 +59,5 @@ public:
     std::string trim(const std::string& s);
 };
 
+
 #endif // PATHFINDING_H

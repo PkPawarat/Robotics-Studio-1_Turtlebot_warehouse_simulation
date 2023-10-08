@@ -250,7 +250,7 @@ std::vector<Cell> platFinding::ReconstructPath(std::map<Cell, Cell, CellCompare>
 }
 
 
-void platFinding::printGrid(const std::vector<std::vector<int>>& grid, const std::vector<Cell>& path = std::vector<Cell>()) {
+void platFinding::printGrid(const std::vector<std::vector<int>>& grid, const std::vector<Cell>& path) {
     // Create a copy of the grid to mark the path
     std::vector<std::vector<std::string>> pathGrid(grid.size(), std::vector<std::string>(grid[0].size()));
 
@@ -284,7 +284,7 @@ std::string platFinding::trim(const std::string& s) {
     return s.substr(start, end - start + 1);
 }
 
-//////////////////////////////////////////How to use this class 
+// ////////////////////////////////////////How to use this class 
 
 // Replace "your_excel_file.xlsx" with the path to your Excel file
 // std::string excelFilePath = "/home/pk/git/Robotics-Studio-1/ExcelFile/PlatLocation1.csv";
@@ -310,4 +310,4 @@ std::string platFinding::trim(const std::string& s) {
 
 // printGrid(pathFinder.grid);
 
-//////////////////////////////////////////
+// ////////////////////////////////////////
