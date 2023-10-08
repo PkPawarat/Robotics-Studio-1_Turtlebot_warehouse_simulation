@@ -115,21 +115,21 @@ void Controller::Stop() {
 
 void Controller::CheckObstacle() {
     if(LIDARreading = true){
-        obstacleDetected = true
+        obstacleDetected = true;
     } else {
-        obstacleDetected = false
+        obstacleDetected = false;
     }
 }
 
 void Controller::CheckBattery() {
     if(battery > 20){
-        batteryLevel = true
+        batteryLevel = true;
     } else {
-        batteryLevel = false
+        batteryLevel = false;
     }
 }
 
-void Controller::Charge() {
+void Controller::Charge() {}
     // Add logic here
 void Controller::RePerentObject(){
 
