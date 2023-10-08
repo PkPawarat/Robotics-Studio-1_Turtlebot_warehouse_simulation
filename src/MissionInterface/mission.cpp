@@ -1,0 +1,17 @@
+ //Mission class that can assign a pickup object and dropoff location
+
+#include <cmath>
+#include <chrono>
+#include <tuple>
+#include <mission.h>
+
+//Empty constructor
+Mission::Mission(){}
+
+~Mission(){};
+
+
+ void setGoals(){
+
+ }
+
