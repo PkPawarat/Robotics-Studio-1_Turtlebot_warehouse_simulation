@@ -33,6 +33,8 @@ class Controller : public ControllerInterface {
         Sensor sensor;
         bool targetDetected;
         bool qrCodeDetected;
+        bool obstacleDetected;
+        bool batteryLevel;
         std::string currentTarget;
 
     public:
@@ -45,6 +47,12 @@ class Controller : public ControllerInterface {
         virtual void DriveTo(const std::string& location);
         virtual void PickUpTarget();
         virtual void DropTarget();
+
+        virtual void CheckObstacle();
+        virtual void CheckBattery();
+        virtual void Stop();
+        virtual void Charge();
+
 
         virtual void RePerentObject();
 
