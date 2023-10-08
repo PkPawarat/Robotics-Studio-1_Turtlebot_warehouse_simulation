@@ -6,12 +6,17 @@
 #include <mission.h>
 
 //Empty constructor
-Mission::Mission(){}
+Mission::Mission(){
+GoalStep = 0;
+}
 
 ~Mission(){};
 
 
- void setGoals(){
-
+ void setGoals(std::vector<geometry_msgs::Point> goals){
+    Goals = goals;
  }
 
+void GoToNext(){
+    
+}

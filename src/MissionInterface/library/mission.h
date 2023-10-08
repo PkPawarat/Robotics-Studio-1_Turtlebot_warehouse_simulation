@@ -36,29 +36,23 @@
      *
      * @param goals
      */
-    void setGoals(std::vector<pfms::geometry_msgs::Point> goals, pfms::PlatformType platform);
+    void setGoals(std::vector<geometry_msgs::Point> goals);
 
+    /**
+     * @brief Accepts the container of goals.
+     *
+     * @param goals
+     */
+    void GoToNext()
 
+    /**
+     * @brief The stored vector of goals for the mission class
+     */
+    std::vector<geometry_msgs::Point> Goals;
+
+    /**
+     * @brief The stored int to hold the step of the goal that mission is up to. This is set to zero at the class constructor
+     */
+    int GoalStep; 
  }
- 
- 
- 
- //Mission class that can assign a pickup object and dropoff location
-
-#include <cmath>
-#include <chrono>
-#include <tuple>
-#include <mission.h>
-
-//Empty constructor
-Mission::Mission(){}
-
-~Mission(){};
-
-
- void setGoals(){
-
- }
-
- void 
  
