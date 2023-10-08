@@ -17,7 +17,7 @@ To launch a Gazebo environment, follow these steps:
    ```bash
    source /path/to/your/ros/workspace/devel/setup.bash
 
-   to launcht the desired Gazebo Environment using one of the provided launch files:
+   to launch the desired Gazebo Environment using one of the provided launch files:
 
-   roslaunch my_custom_gazebo launch_file_name.launch
+   roslaunch my_custom_world_gazebo launch_file_name.launch
 
