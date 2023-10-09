@@ -4,7 +4,7 @@
 #include "ControllerInterface/library/controller.h"
 #include "ControllerInterface/library/controllerinterface.h"
 #include "ControllerInterface/library/pathfinding.h"
-#include "ControllerInterface/library/ROSEnvironment.h"
+#include "ControllerInterface/library/ROSNode.h"
 #include "ControllerInterface/library/sensor.h"
 #include "MissionInterface/library/missionInterface.h"
 #include "MissionInterface/library/mission.h"
@@ -149,30 +149,46 @@ std::string trim(const std::string& s) {
 //     return 0;
 // }
 
-int main() {
+int main(int argc, char **argv) {
     // Replace "your_excel_file.xlsx" with the path to your Excel file
-    std::string excelFilePath = "/home/pk/git/Robotics-Studio-1/ExcelFile/PlatLocation1.csv";
-    // /home/pk/git/Robotics-Studio-1/ExcelFile
-    // /home/pawarat/git/Robotics-Studio-1/ExcelFile
-
-    // Create an instance of the platFinding class
-    platFinding pathFinder(excelFilePath);
-
-    // Define the start and goal cells
-    Cell start = {0, 0};
-    Cell goal = {5, 5};
-
-    // Find the path from start to goal
-    std::vector<Cell> path = pathFinder.FindPath(start, goal);
-
-    // Print the path
-    std::cout << "Path from (" << start.row << "," << start.col << ") to (" << goal.row << "," << goal.col << "):" << std::endl;
-    for (const Cell& cell : path) {
-        std::cout << "(" << cell.row << "," << cell.col << ") ";
+    ros::init(argc, argv, "ROSNode");
+    ros::NodeHandle nh;
+    ROSNode *rosnode = new ROSNode(nh);
+    while(ros::ok()){
+        // rosnode->sendCmd(0.1,0,0,0,0,0);
+        ROS_INFO_STREAM(rosnode->returnImage());
+        ROS_INFO_STREAM(rosnode->returnOdom());
+        ros::spin();
     }
-    std::cout << std::endl;
+    
 
-    printGrid(pathFinder.grid);
+    // rosS->sendCmd(-1,0,0,0,0,0);
+
+    // ros::shutdown();
+    //SORRY IM DOING SOME TESTING - LAUREN
+    // std::string excelFilePath = "/home/pk/git/Robotics-Studio-1/ExcelFile/PlatLocation1.csv";
+    // // /home/pk/git/Robotics-Studio-1/ExcelFile
+    // // /home/pawarat/git/Robotics-Studio-1/ExcelFile
+
+    // // Create an instance of the platFinding class
+    // platFinding pathFinder(excelFilePath);
+
+    // // Define the start and goal cells
+    // Cell start = {0, 0};
+    // Cell goal = {5, 5};
+
+    // // Find the path from start to goal
+    // std::vector<Cell> path = pathFinder.FindPath(start, goal);
+
+    // // Print the path
+    // std::cout << "Path from (" << start.row << "," << start.col << ") to (" << goal.row << "," << goal.col << "):" << std::endl;
+    // for (const Cell& cell : path) {
+    //     std::cout << "(" << cell.row << "," << cell.col << ") ";
+    // }
+    // std::cout << std::endl;
+
+    // printGrid(pathFinder.grid);
+    // END HERE THANKS
     return 0;
 }
 

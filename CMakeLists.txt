@@ -50,12 +50,13 @@ include_directories(
 )
 
 ## Declare a C++ library
-add_library(${PROJECT_NAME}_sensor src/ControllerInterface/Sensor.cpp)
+add_library(${PROJECT_NAME}_sensor src/ControllerInterface/sensor.cpp)
 add_library(${PROJECT_NAME}_controller src/ControllerInterface/controller.cpp)
 add_library(${PROJECT_NAME}_pathfinding src/ControllerInterface/pathfinding.cpp)
+add_library(${PROJECT_NAME}_ROSNode src/ControllerInterface/ROSNode.cpp)
 
 ## Declare a C++ executable
-add_executable(${PROJECT_NAME}_sample src/main.cpp src/ControllerInterface/controller.cpp src/ControllerInterface/Sensor.cpp src/ControllerInterface/pathfinding.cpp)
+add_executable(${PROJECT_NAME}_sample src/main.cpp src/ControllerInterface/controller.cpp src/ControllerInterface/sensor.cpp src/ControllerInterface/pathfinding.cpp src/ControllerInterface/ROSNode.cpp)
 
 # Add cmake target dependencies of the executable
 # This enforces generating messages before building these executables
@@ -65,7 +66,7 @@ add_dependencies(${PROJECT_NAME}_sample ${${PROJECT_NAME}_EXPORTED_TARGETS} ${ca
 target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor)
 target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_controller)
 target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding)
-
+target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_ROSNode)
 #############
 ## Testing ##
 #############

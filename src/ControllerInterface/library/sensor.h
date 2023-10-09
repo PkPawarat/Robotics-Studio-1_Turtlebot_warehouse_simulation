@@ -1,5 +1,5 @@
 #pragma once
-#include "ROSEnvironment.h"
+#include "ROSNode.h"
 
 // Keep only the headers needed
 #include <vector>
@@ -25,4 +25,8 @@ public:
     void simulateEnvironments();
     void detectObject();
     void detectQRCode();
+
+public:
+// bot_laser_scan from ROSNode
+
 };
