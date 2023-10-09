@@ -35,6 +35,8 @@ class Controller : public ControllerInterface {
         bool qrCodeDetected;
         bool obstacleDetected;
         bool batteryLevel;
+        bool LIDARreading;
+        int battery;
         std::string currentTarget;
 
     public:
