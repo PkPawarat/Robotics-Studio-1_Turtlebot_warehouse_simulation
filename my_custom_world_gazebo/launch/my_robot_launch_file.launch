@@ -1,0 +1,12 @@
+<launch>
+  <!-- Launch your custom world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find my_custom_world_gazebo)/worlds/final_warehouse.world"/>
+  </include>
+
+  <!-- Set the robot_description parameter using a URDF file -->
+  <param name="robot_description" textfile="$(find turtlebot3_description)/urdf/turtlebot3_waffle_pi.urdf.xacro" />
+
+  <!-- Spawn TurtleBot3 -->
+  <node name="spawn_turtlebot3" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -x 0 -y 0 -z 0.1 -model turtlebot3" />
+</launch>

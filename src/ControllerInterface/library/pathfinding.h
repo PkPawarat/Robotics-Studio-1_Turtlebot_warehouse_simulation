@@ -32,13 +32,11 @@ struct CellCompare {
 struct CostCellPair {
     double cost;
     Cell cell;
-
     CostCellPair(double _cost, const Cell& _cell) : cost(_cost), cell(_cell) {}
 
     bool operator>(const CostCellPair& other) const {
         return cost > other.cost;
     }
-
     bool operator<(const CostCellPair& other) const {
         return cost < other.cost;
     }
@@ -46,32 +44,20 @@ struct CostCellPair {
 
 class platFinding {
 private:
-    // std::vector<std::vector<int>> grid;
     int rows;
     int columns;
-
-    // std::vector<Cell> GetNeighbors(Cell cell);
-    // double CalculateHeuristic(Cell cell, Cell goal);
-    // std::vector<Cell> ReconstructPath(std::map<Cell, Cell, CellCompare> cameFrom, Cell current);
-
 public:
     platFinding(const std::string& excelFilePath);
     std::vector<Cell> FindPath(Cell start, Cell goal);
-
-
     std::vector<Cell> GetNeighbors(Cell cell);
-
     double CalculateHeuristic(Cell cell, Cell goal);
-
-
     std::vector<Cell> ReconstructPath(std::map<Cell, Cell, CellCompare> cameFrom, Cell current) ;
-  
     std::vector<std::vector<int>> grid;
-
     std::string convertCellValue(const std::string& cellValue); // Add the function here
-
     int symbolToInt(const std::string& symbol);
-
+    void printGrid(const std::vector<std::vector<int>>& grid, const std::vector<Cell>& path = std::vector<Cell>());
+    std::string trim(const std::string& s);
 };
+
 
 #endif // PATHFINDING_H

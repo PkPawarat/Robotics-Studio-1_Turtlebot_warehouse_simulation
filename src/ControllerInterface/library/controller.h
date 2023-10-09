@@ -11,19 +11,14 @@
 
 #ifndef CONTROLLER
 #define CONTROLLER
-
 #include "sensor.h"
 #include <string>
 #include "controllerinterface.h"
-
-
 // Keep only the headers needed
 #include <vector>
-// #include "pfms_types.h"
 #include "ros/ros.h"
 #include <atomic>
 #include <mutex>
-
 #include "visualization_msgs/MarkerArray.h"
 #include "std_srvs/SetBool.h"
 #include "nav_msgs/Odometry.h"
@@ -35,6 +30,7 @@
  * @brief Initialises the Controller Class as a subsclass from the Parent ControllerInterface Class
  * 
  */
+
 class Controller : public ControllerInterface {
     private:
         /**
@@ -79,6 +75,13 @@ class Controller : public ControllerInterface {
          * 
          */
         Controller();
+
+
+        /**
+         * @brief Initialises the SetTargets function
+         * 
+         */
+        virtual void SetTargets(std::vector<geometry_msgs::Point>);
 
         /**
          * @brief Initialises the Execute function
@@ -147,6 +150,24 @@ class Controller : public ControllerInterface {
          * 
          */
         virtual void Charge();
+
+        /**
+         * @brief Initialises the RePerentObject function
+         * 
+         */
+        virtual void RePerentObject();
+
+        
+    protected:
+        struct TargetStats {
+            geometry_msgs::Point location; //! location of goal
+            double distance; //! distance to goal
+            double time; //! time to goal
+        };
+        std::vector<TargetStats> Targets;
+
+        geometry_msgs::PoseStamped Goal;
+
     };
 
 #endif // CONTROLLER
