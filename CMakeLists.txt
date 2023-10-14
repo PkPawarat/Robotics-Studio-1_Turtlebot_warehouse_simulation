@@ -69,15 +69,17 @@ add_dependencies(${PROJECT_NAME}_sample ${${PROJECT_NAME}_EXPORTED_TARGETS} ${ca
 target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor)
 target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_controller)
 target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding)
+target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_rosnode)
 
 #############
 ## Testing ##
 #############
 # ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}_test test/utest.cpp )
-# if(TARGET ${PROJECT_NAME}_test)
-#    target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor )
-#    target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding )
-#    target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_controller )
-#    message ( STATUS " catkin_LIBRARIES ${catkin_LIBRARIES}")
-# endif()
+catkin_add_gtest(${PROJECT_NAME}_test test/utest.cpp )
+if(TARGET ${PROJECT_NAME}_test)
+   target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor )
+   target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding )
+   target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_controller )
+  target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_rosnode)
+message ( STATUS " catkin_LIBRARIES ${catkin_LIBRARIES}")
+endif()
