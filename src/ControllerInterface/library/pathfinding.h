@@ -45,13 +45,14 @@ namespace std {
 class PathPlanning {
 public:
     unordered_map<Node, vector<pair<Node, double>>> graph;
-    double MaxDistanceNode = 1.0;
+    double MaxDistanceNode = 1.4;
 
     void AddEdge(const Node& from, const Node& to, double cost);
     void AutumeticAddingEdge(const vector<Node>& AllNode);
     vector<Node> ShortestPath(const Node& start, const Node& destination);
     Node FindClosestNode(const std::vector<Node>& nodes, const Node& target);
-
+    void DrawMap(const std::vector<Node>& locations, double precision);
+    void DrawMapWithShortestPath(const std::vector<Node>& locations, const std::vector<Node>& shortestPath, double precision) ;
 };
 
 #endif // PATHFINDING_H

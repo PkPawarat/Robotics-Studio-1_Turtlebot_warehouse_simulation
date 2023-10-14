@@ -112,6 +112,98 @@ Node PathPlanning::FindClosestNode(const std::vector<Node>& nodes, const Node& t
 
     return closestNode;
 }
+
+void PathPlanning::DrawMap(const std::vector<Node>& locations, double precision) {
+    double minX = std::min_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.X < b.X; })->X;
+    double minY = std::min_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.Y < b.Y; })->Y;
+    double maxX = std::max_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.X < b.X; })->X;
+    double maxY = std::max_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.Y < b.Y; })->Y;
+
+    for (double y = minY; y <= maxY; y += precision) {
+        for (double x = minX; x <= maxX; x += precision) {
+            if (std::any_of(locations.begin(), locations.end(), [x, y, precision](const Node& n) { 
+                return std::abs(n.X - x) < precision && std::abs(n.Y - y) < precision; 
+            })) {
+                std::cout << " * ";
+            } else {
+                std::cout << " . ";
+            }
+        }
+        std::cout << std::endl;
+    }
+}
+
+void PathPlanning::DrawMapWithShortestPath(const std::vector<Node>& locations, const std::vector<Node>& shortestPath, double precision) {
+    double minX = std::min_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.X < b.X; })->X;
+    double minY = std::min_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.Y < b.Y; })->Y;
+    double maxX = std::max_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.X < b.X; })->X;
+    double maxY = std::max_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.Y < b.Y; })->Y;
+
+    int gridWidth = static_cast<int>((maxX - minX) / precision) + 1;
+    int gridHeight = static_cast<int>((maxY - minY) / precision) + 1;
+    
+    std::vector<std::vector<std::string>> grid(gridHeight, std::vector<std::string>(gridWidth, " ' "));
+
+    for (const Node& location : locations) {
+        int x = static_cast<int>((location.X - minX) / precision);
+        int y = static_cast<int>((location.Y - minY) / precision);
+        grid[y][x] = " + ";
+    }
+    int i = 0;
+    for (const Node& location : shortestPath) {
+        int x = static_cast<int>((location.X - minX) / precision);
+        int y = static_cast<int>((location.Y - minY) / precision);
+        if (&location == &shortestPath.back()) {
+            grid[y][x] = " X ";
+        } else {
+            grid[y][x] = " " + std::to_string(i) + " ";
+        }
+        i++;
+    }
+
+    for (int y = 0; y < gridHeight; y++) {
+        for (int x = 0; x < gridWidth; x++) {
+            std::cout << grid[y][x];
+        }
+        std::cout << std::endl;
+    }
+
+
+    std::cout << "STARTLOGGING" << std::endl;
+    
+
+    // For logging
+    std::ofstream logFile("/home/pawarat/catkin_ws/src/Robotics-Studio-1/logs/path_log.txt", std::ios::app); // Open in append mode
+    
+    // Error checking for file opening
+    if (!logFile.is_open()) {
+        std::cerr << "Failed to open the log file." << std::endl;
+        return;
+    }
+    // Log the path
+    logFile << "Path from (" << shortestPath.front().X << "," << shortestPath.front().Y 
+            << ") to (" << shortestPath.back().X << "," << shortestPath.back().Y << "):" << std::endl;
+
+    logFile << "Shortest path " << std::endl;
+    for (const Node& node : shortestPath) {
+        logFile << "(" << node.X << "," << node.Y << ") ";
+    }
+    std::cout << std::endl;
+    std::cout << "\n";
+
+    for (int y = 0; y < gridHeight; y++) {
+        for (int x = 0; x < gridWidth; x++) {
+            logFile << grid[y][x];
+        }
+        logFile << std::endl;
+    }
+
+
+    logFile << std::endl; // Add a blank line to separate different paths in the log
+    logFile.close(); // Always close the file when done
+}
+
+
 // ////////////////////////////////////////How to use this class 
 
 // int main() {
