@@ -155,3 +155,7 @@ firefox ~/catkin_ws/src/Robotics-Studio-1/doc/html/index.html
 
 
 
+Record ros bag 
+        cd ~/catkin_ws/src/Robotics-Studio-1/logs               // record bag in this directory
+        rosbag record -O pointLocation.bag /initialpose
+        rosbag info my_point_cloud.bag                          // check ros bag
