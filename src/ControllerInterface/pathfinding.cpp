@@ -12,302 +12,264 @@
 #include <string>
 #include <vector>
 
-platFinding::platFinding(const std::string& excelFilePath) {
-    std::ifstream wb(excelFilePath);
-    std::string line;
-    std::stringstream ss;
+#include <cmath>
+#include <algorithm>
 
-    while (std::getline(wb, line)) {
-        ss.clear();
-        ss.str(line);
+bool Node::operator==(const Node& other) const {
+    return X == other.X && Y == other.Y;
+}
 
-        std::vector<int> rowData;
-        std::string cell;
+bool Node::operator<(const Node& other) const {
+    if (X != other.X) return X < other.X;
+    return Y < other.Y;
+}
 
-        while (std::getline(ss, cell, ',')) {
-            try {
-                std::string check = convertCellValue(cell);
-                int cellValue = symbolToInt(check);
-                rowData.push_back(cellValue);
-            } catch (const std::exception& e) {
-                std::cerr << "Error parsing cell value: " << e.what() << std::endl;
-                rowData.push_back(0);
+size_t std::hash<Node>::operator()(const Node& node) const {
+    return hash<double>()(node.X) ^ hash<double>()(node.Y);
+}
+
+void PathPlanning::AddEdge(const Node& from, const Node& to, double cost) {
+    graph[from].emplace_back(to, cost);
+}
+
+void PathPlanning::AutumeticAddingEdge(const vector<Node>& AllNode) {
+    for (int i = 0; i < AllNode.size(); i++) {
+        for (int j = i + 1; j < AllNode.size(); j++) {
+            if (i != j
+                && abs(AllNode[i].X - AllNode[j].X) <= MaxDistanceNode
+                && abs(AllNode[i].Y - AllNode[j].Y) <= MaxDistanceNode)
+            {
+                AddEdge(AllNode[i], AllNode[j], 1.0);
+                AddEdge(AllNode[j], AllNode[i], 1.0);
             }
         }
+    }
+}
 
-        if (columns == 0) {
-            columns = static_cast<int>(rowData.size());
-        }
+vector<Node> PathPlanning::ShortestPath(const Node& start, const Node& destination) {
+    unordered_map<Node, double> distance;
+    unordered_map<Node, Node> previous;
+    set<Node> visited;
+    priority_queue<pair<double, Node>, vector<pair<double, Node>>, greater<pair<double, Node>>> queue;
 
-        if (rowData.size() != static_cast<size_t>(columns)) {
-            std::cerr << "Inconsistent number of columns in the CSV file." << std::endl;
+    for (const auto& pair : graph) {
+        distance[pair.first] = numeric_limits<double>::infinity();
+    }
+
+    distance[start] = 0.0;
+    queue.emplace(0.0, start);
+
+    while (!queue.empty()) {
+        double current_distance = queue.top().first;
+        Node current = queue.top().second;
+        queue.pop();
+
+        if (visited.find(current) != visited.end()) 
+            continue;
+        visited.insert(current);
+
+        if (current == destination) 
             break;
-        }
 
-        grid.push_back(rowData);
-        ++rows;
-    }
+        if (graph.find(current) == graph.end()) 
+            continue;
 
-    wb.close();
-}
-
-std::string platFinding::convertCellValue(const std::string& cellValue) {
-    std::istringstream iss(cellValue);
-    std::string prefix, value;
-
-    if (std::getline(iss, prefix, ' ')) {
-        std::getline(iss, value);
-        if (value.empty()) {
-            value = cellValue;
-        }
-    } else {
-        value = cellValue;
-    }
-
-    value.erase(std::remove_if(value.begin(), value.end(), ::isspace), value.end());
-
-    static std::unordered_map<std::string, std::string> cellMappings = {
-        {"L", "←"},
-        {"R", "→"},
-        {"U", "↑"},
-        {"D", "↓"},
-        {"U&D", "↕"},
-        {"L&R", "↔"},
-        {"U&L", "←↑"},
-        {"U&R", "↑→"},
-        {"D&L", "←↓"},
-        {"D&R", "↓→"},
-        {"U&D&L", "←↕"},
-        {"U&D&R", "↕→"},
-        {"U&L&R", "↑↔"},
-        {"D&L&R", "↓↔"},
-        {"U&D&L&R", "+"}
-    };
-
-    if (prefix == "P" || prefix == "W" || prefix == "C") {
-        auto it = cellMappings.find(value);
-        if (it != cellMappings.end()) {
-            return prefix + it->second;
-        } else {
-            return cellValue;
-        }
-    } else {
-        auto it = cellMappings.find(value);
-        if (it != cellMappings.end()) {
-            return it->second;
-        } else {
-            return value;
-        }
-    }
-}
-
-int platFinding::symbolToInt(const std::string& symbol) {
-    static std::unordered_map<std::string, int> symbolMappings = {
-        {"←", 1},
-        {"→", 2},
-        {"↑", 3},
-        {"↓", 4},
-        {"↕", 5},
-        {"↔", 6},
-        {"←↑", 7},
-        {"↑→", 8},
-        {"←↓", 9},
-        {"↓→", 10},
-        {"←↕", 11},
-        {"↕→", 12},
-        {"↑↔", 13},
-        {"↓↔", 14},
-        {"+", 15}
-    };
-
-    char firstChar = symbol[0];
-
-    if (firstChar == 'P' || firstChar == 'W' || firstChar == 'C') {
-        std::string symbolWithoutPrefix = symbol.substr(1);
-        auto it = symbolMappings.find(symbolWithoutPrefix);
-
-        if (it != symbolMappings.end()) {
-            int adjustedValue = it->second;
-
-            if (firstChar == 'P') {
-                adjustedValue += 100;
-            } else if (firstChar == 'W') {
-                adjustedValue += 200;
-            } else if (firstChar == 'C') {
-                adjustedValue += 300;
-            }
-
-            return adjustedValue;
-        }
-    } else {
-        auto it = symbolMappings.find(symbol);
-        if (it != symbolMappings.end()) {
-            return it->second;
-        }
-    }
-
-    return 0;
-}
-
-
-//TODO check the correct direction 
-std::vector<Cell> platFinding::GetNeighbors(Cell cell) {
-    std::vector<Cell> neighbors;
-    std::string cellValue = std::to_string(grid[cell.row][cell.col]);
-    std::istringstream iss(cellValue);
-    std::string prefix, directions;
-
-    if (std::getline(iss, prefix, ',')) {
-        std::getline(iss, directions);
-    } else {
-        directions = cellValue;
-    }
-
-    directions.erase(std::remove_if(directions.begin(), directions.end(), ::isspace), directions.end());
-
-    for (char direction : directions) {
-        switch (direction) {
-            case 'L':
-                neighbors.push_back({cell.row, cell.col - 1});
-                break;
-            case 'R':
-                neighbors.push_back({cell.row, cell.col + 1});
-                break;
-            case 'U':
-                neighbors.push_back({cell.row - 1, cell.col});
-                break;
-            case 'D':
-                neighbors.push_back({cell.row + 1, cell.col});
-                break;
-        }
-    }
-
-    neighbors.erase(std::remove_if(neighbors.begin(), neighbors.end(),
-        [&](const Cell& n) {
-            return (n.row < 0 || n.row >= rows || n.col < 0 || n.col >= columns);
-        }), neighbors.end());
-
-    return neighbors;
-}
-
-double platFinding::CalculateHeuristic(Cell cell, Cell goal) {
-    return std::sqrt(std::pow(cell.row - goal.row, 2) + std::pow(cell.col - goal.col, 2));
-}
-
-std::vector<Cell> platFinding::FindPath(Cell start, Cell goal) {
-    std::priority_queue<CostCellPair> openSet;
-
-    std::map<Cell, Cell, CellCompare> cameFrom;
-    std::map<Cell, double, CellCompare> gScore;
-    std::map<Cell, double, CellCompare> fScore;
-    std::set<Cell, CellCompare> closedSet;
-
-    openSet.push(CostCellPair(0, start));
-    gScore[start] = 0;
-    fScore[start] = CalculateHeuristic(start, goal);
-
-    while (!openSet.empty()) {
-        CostCellPair currentPair = openSet.top();
-        openSet.pop();
-        Cell current = currentPair.cell;
-
-        if (current.row == goal.row && current.col == goal.col) {
-            return ReconstructPath(cameFrom, current);
-        }
-
-        closedSet.insert(current);
-
-        for (const Cell& neighbor : GetNeighbors(current)) {
-            if (closedSet.count(neighbor) > 0)
-                continue;
-
-            double tentativeGScore = gScore[current] + CalculateHeuristic(current, neighbor);
-
-            if (gScore.find(neighbor) == gScore.end() || tentativeGScore < gScore[neighbor]) {
-                cameFrom[neighbor] = current;
-                gScore[neighbor] = tentativeGScore;
-                fScore[neighbor] = gScore[neighbor] + CalculateHeuristic(neighbor, goal);
-
-                openSet.push(CostCellPair(fScore[neighbor], neighbor));
+        for (const auto& neighbor_weight_pair : graph[current]) {
+            Node neighbor = neighbor_weight_pair.first;
+            double weight = neighbor_weight_pair.second;
+            double altDistance = distance[current] + weight;
+            if (distance.find(neighbor) == distance.end() || altDistance < distance[neighbor]) {
+                distance[neighbor] = altDistance;
+                previous[neighbor] = current;
+                queue.emplace(altDistance, neighbor);
             }
         }
     }
 
-    return std::vector<Cell>(); // No path found
-}
-
-std::vector<Cell> platFinding::ReconstructPath(std::map<Cell, Cell, CellCompare> cameFrom, Cell current) {
-    std::vector<Cell> path;
-    path.push_back(current);
-
-    while (cameFrom.find(current) != cameFrom.end()) {
-        current = cameFrom[current];
-        path.push_back(current);
+    vector<Node> path;
+    for (Node node = destination; ; node = previous[node]) {
+        path.push_back(node);
+        if (previous.find(node) == previous.end()) 
+            break;
     }
+    reverse(path.begin(), path.end());
 
-    std::reverse(path.begin(), path.end());
     return path;
 }
 
+// Function to find the closest node to a given coordinate
+Node PathPlanning::FindClosestNode(const std::vector<Node>& nodes, const Node& target) {
+    double minDistance = std::numeric_limits<double>::max();
+    Node closestNode;
 
-void platFinding::printGrid(const std::vector<std::vector<int>>& grid, const std::vector<Cell>& path) {
-    // Create a copy of the grid to mark the path
-    std::vector<std::vector<std::string>> pathGrid(grid.size(), std::vector<std::string>(grid[0].size()));
-
-    for (size_t i = 0; i < pathGrid.size(); i++) {
-        for (size_t j = 0; j < pathGrid[0].size(); j++) {
-            pathGrid[i][j] = std::to_string(grid[i][j]); // Initialize with obstacles or empty spaces
+    for (const Node& node : nodes) {
+        double distance = std::sqrt(std::pow(node.X - target.X, 2) + std::pow(node.Y - target.Y, 2));
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestNode = node;
         }
     }
 
-    for (const Cell& cell : path) {
-        pathGrid[cell.row][cell.col] = "*"; // Mark path cells with asterisk
-    }
+    return closestNode;
+}
 
-    // Print the path-marked grid
-    for (size_t i = 0; i < pathGrid.size(); i++) {
-        for (size_t j = 0; j < pathGrid[0].size(); j++) {
-            std::cout << pathGrid[i][j] << " ";
+void PathPlanning::DrawMap(const std::vector<Node>& locations, double precision) {
+    double minX = std::min_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.X < b.X; })->X;
+    double minY = std::min_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.Y < b.Y; })->Y;
+    double maxX = std::max_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.X < b.X; })->X;
+    double maxY = std::max_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.Y < b.Y; })->Y;
+
+    for (double y = minY; y <= maxY; y += precision) {
+        for (double x = minX; x <= maxX; x += precision) {
+            if (std::any_of(locations.begin(), locations.end(), [x, y, precision](const Node& n) { 
+                return std::abs(n.X - x) < precision && std::abs(n.Y - y) < precision; 
+            })) {
+                std::cout << " * ";
+            } else {
+                std::cout << " . ";
+            }
         }
         std::cout << std::endl;
     }
 }
 
-// Function to trim leading and trailing spaces from a string
-std::string platFinding::trim(const std::string& s) {
-    size_t start = s.find_first_not_of(" \t\r\n");
-    size_t end = s.find_last_not_of(" \t\r\n");
-    if (start == std::string::npos || end == std::string::npos) {
-        // String is empty or contains only spaces
-        return "";
+void PathPlanning::DrawMapWithShortestPath(const std::vector<Node>& locations, const std::vector<Node>& shortestPath, double precision) {
+    double minX = std::min_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.X < b.X; })->X;
+    double minY = std::min_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.Y < b.Y; })->Y;
+    double maxX = std::max_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.X < b.X; })->X;
+    double maxY = std::max_element(locations.begin(), locations.end(), [](const Node& a, const Node& b) { return a.Y < b.Y; })->Y;
+
+    int gridWidth = static_cast<int>((maxX - minX) / precision) + 1;
+    int gridHeight = static_cast<int>((maxY - minY) / precision) + 1;
+    
+    std::vector<std::vector<std::string>> grid(gridHeight, std::vector<std::string>(gridWidth, " ' "));
+
+    for (const Node& location : locations) {
+        int x = static_cast<int>((location.X - minX) / precision);
+        int y = static_cast<int>((location.Y - minY) / precision);
+        grid[y][x] = " + ";
     }
-    return s.substr(start, end - start + 1);
+    int i = 0;
+    for (const Node& location : shortestPath) {
+        int x = static_cast<int>((location.X - minX) / precision);
+        int y = static_cast<int>((location.Y - minY) / precision);
+        if (&location == &shortestPath.back()) {
+            grid[y][x] = " X ";
+        } else {
+            grid[y][x] = " " + std::to_string(i) + " ";
+        }
+        i++;
+    }
+
+    for (int y = 0; y < gridHeight; y++) {
+        for (int x = 0; x < gridWidth; x++) {
+            std::cout << grid[y][x];
+        }
+        std::cout << std::endl;
+    }
+
+
+    std::cout << "STARTLOGGING" << std::endl;
+    
+
+    // For logging
+    std::ofstream logFile("/home/pawarat/catkin_ws/src/Robotics-Studio-1/logs/path_log.txt", std::ios::app); // Open in append mode
+    
+    // Error checking for file opening
+    if (!logFile.is_open()) {
+        std::cerr << "Failed to open the log file." << std::endl;
+        return;
+    }
+    // Log the path
+    logFile << "Path from (" << shortestPath.front().X << "," << shortestPath.front().Y 
+            << ") to (" << shortestPath.back().X << "," << shortestPath.back().Y << "):" << std::endl;
+
+    logFile << "Shortest path " << std::endl;
+    for (const Node& node : shortestPath) {
+        logFile << "(" << node.X << "," << node.Y << ") ";
+    }
+    std::cout << std::endl;
+    std::cout << "\n";
+
+    for (int y = 0; y < gridHeight; y++) {
+        for (int x = 0; x < gridWidth; x++) {
+            logFile << grid[y][x];
+        }
+        logFile << std::endl;
+    }
+
+
+    logFile << std::endl; // Add a blank line to separate different paths in the log
+    logFile.close(); // Always close the file when done
 }
+
 
 // ////////////////////////////////////////How to use this class 
 
-// Replace "your_excel_file.xlsx" with the path to your Excel file
-// std::string excelFilePath = "/home/pk/git/Robotics-Studio-1/ExcelFile/PlatLocation1.csv";
-// // /home/pk/git/Robotics-Studio-1/ExcelFile
-// // /home/pawarat/git/Robotics-Studio-1/ExcelFile
+// int main() {
+//     // Create an instance of the PathPlanning class
+//     PathPlanning pathFinder;
 
-// // Create an instance of the platFinding class
-// platFinding pathFinder(excelFilePath);
+//     // Add nodes and edges to the path planner
+//     std::vector<Node> nodes;/* Initialize your nodes */
+//     // Add 20 nodes with X and Y coordinates
+//     nodes.push_back({0.0, 0.0});
+//     nodes.push_back({1.0, 1.0});
+//     nodes.push_back({2.0, 2.0});
+//     nodes.push_back({3.0, 3.0});
+//     nodes.push_back({4.0, 4.0});
+//     nodes.push_back({5.0, 5.0});
+//     nodes.push_back({6.0, 6.0});
+//     nodes.push_back({7.0, 7.0});
+//     nodes.push_back({8.0, 8.0});
+//     nodes.push_back({9.0, 9.0});
+//     nodes.push_back({10.0, 10.0});
+//     nodes.push_back({11.0, 11.0});
+//     nodes.push_back({12.0, 12.0});
+//     nodes.push_back({13.0, 13.0});
+//     nodes.push_back({14.0, 14.0});
+//     nodes.push_back({15.0, 15.0});
+//     nodes.push_back({16.0, 16.0});
+//     nodes.push_back({17.0, 17.0});
+//     nodes.push_back({18.0, 18.0});
+//     nodes.push_back({19.0, 19.0});
+//     pathFinder.AutumeticAddingEdge(nodes);
 
-// // Define the start and goal cells
-// Cell start = {0, 0};
-// Cell goal = {5, 5};
+//     while (true) {
+//         // Prompt the user for start and goal nodes
+//         Node start, goal;
+//         std::cout << "Enter start node (X Y): ";
+//         std::cin >> start.X >> start.Y;
+//         std::cout << "Enter goal node (X Y): ";
+//         std::cin >> goal.X >> goal.Y;
 
-// // Find the path from start to goal
-// std::vector<Cell> path = pathFinder.FindPath(start, goal);
+//         // Find the closest nodes to the specified coordinates
+//         start = pathFinder.FindClosestNode(nodes, start);
+//         goal = pathFinder.FindClosestNode(nodes, goal);
 
-// // Print the path
-// std::cout << "Path from (" << start.row << "," << start.col << ") to (" << goal.row << "," << goal.col << "):" << std::endl;
-// for (const Cell& cell : path) {
-//     std::cout << "(" << cell.row << "," << cell.col << ") ";
+//         // Find the shortest path
+//         std::vector<Node> path = pathFinder.ShortestPath(start, goal);
+
+//         // Display the path
+//         if (!path.empty()) {
+//             std::cout << "Shortest path from (" << start.X << "," << start.Y << ") to (" << goal.X << "," << goal.Y << "):" << std::endl;
+//             for (const Node& node : path) {
+//                 std::cout << "(" << node.X << "," << node.Y << ") ";
+//             }
+//             std::cout << std::endl;
+//         } else {
+//             std::cout << "No path found from (" << start.X << "," << start.Y << ") to (" << goal.X << "," << goal.Y << ")." << std::endl;
+//         }
+
+//         // Ask the user if they want to continue or exit
+//         std::cout << "Do you want to find another path? (y/n): ";
+//         char choice;
+//         std::cin >> choice;
+
+//         if (choice != 'y' && choice != 'Y') {
+//             break; // Exit the loop if the user chooses not to continue
+//         }
+//     }
+
+//     return 0;
 // }
-// std::cout << std::endl;
-
-// printGrid(pathFinder.grid);
-
-// ////////////////////////////////////////
