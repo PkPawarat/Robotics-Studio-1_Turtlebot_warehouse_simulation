@@ -13,13 +13,13 @@
 
 #include <gtest/gtest.h>
 
-#include "/home/pawarat/catkin_ws/src/Robotics-Studio-1/src/ControllerInterface/library/pathfinding.h"
-#include "/home/pawarat/catkin_ws/src/Robotics-Studio-1/src/ControllerInterface/library/controllerinterface.h"
-#include "/home/pawarat/catkin_ws/src/Robotics-Studio-1/src/ControllerInterface/library/pathfinding.h"
-#include "/home/pawarat/catkin_ws/src/Robotics-Studio-1/src/ControllerInterface/library/ROSNode.h"
-#include "/home/pawarat/catkin_ws/src/Robotics-Studio-1/src/ControllerInterface/library/sensor.h"
-#include "/home/pawarat/catkin_ws/src/Robotics-Studio-1/src/MissionInterface/library/missionInterface.h"
-#include "/home/pawarat/catkin_ws/src/Robotics-Studio-1/src/MissionInterface/library/mission.h"
+#include "ControllerInterface/library/pathfinding.h"
+#include "ControllerInterface/library/controllerinterface.h"
+#include "ControllerInterface/library/pathfinding.h"
+#include "ControllerInterface/library/ROSNode.h"
+#include "ControllerInterface/library/sensor.h"
+#include "MissionInterface/library/missionInterface.h"
+#include "MissionInterface/library/mission.h"
 
 #include <random>
 

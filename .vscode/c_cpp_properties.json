@@ -6,20 +6,21 @@
                 "limitSymbolsToIncludedHeaders": false
             },
             "includePath": [
-                "/home/pk/catkin_ws/devel/include/**",
+                "${workspaceFolder}/src/ControllerInterface/library",
+                "${workspaceFolder}/src/MissionInterface/library",
+                "/home/pawarat/catkin_ws/src/**",
+                "/home/pawarat/catkin_ws/src/Robotics-Studio-1/**",
+                "/home/pawarat/catkin_ws/src/Robotics-Studio-1/src/ControllerInterface/library/**",
+                "/home/pawarat/catkin_ws/src/Robotics-Studio-1/src/MissionInterface/library/**",
                 "/opt/ros/noetic/include/**",
-                "/home/pk/catkin_ws/src/realsense-ros/realsense2_camera/include/**",
-                "/home/pk/catkin_ws/src/turtlebot3_simulations/turtlebot3_fake/include/**",
-                "/home/pk/catkin_ws/src/turtlebot3_simulations/turtlebot3_gazebo/include/**",
-                "/home/pk/catkin_ws/src/turtlebot3/turtlebot3_slam/include/**",
-                "/home/pk/catkin_ws/src/usb_cam/include/**",
                 "/usr/include/**"
             ],
             "name": "ROS",
             "intelliSenseMode": "gcc-x64",
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "gnu11",
-            "cppStandard": "c++14"
+            "cppStandard": "c++14",
+            "forcedInclude": []
         }
     ],
     "version": 4
