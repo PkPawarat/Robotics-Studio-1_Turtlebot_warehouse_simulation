@@ -16,9 +16,25 @@
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
 
+
+//subscribing to darknet_ros nodes
+#include "darknet_ros_msgs/BoundingBoxes.h"
+
+
+class Sensor {
+    public:
+    Sensor();
+    void simulateEnvironments();
+    void detectObject();
+    void detectQRCode();
+    void boundingBoxCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg);
+}
+
 Sensor::Sensor() {
     // Initialize ROS environment
     // rosEnv.simulate();
+    ros::NodeHandle nh;
+    ros::Subscriber sub = nh.subscribe("darknet_ros/bounding_boxes", 1000, &Sensor::boundingBoxCallback, this);
 }
 
 void Sensor::simulateEnvironments(){
@@ -35,4 +51,20 @@ void Sensor::detectQRCode() {
     // Camera QR code detection logic
     std::cout << "Detecting QR codes using camera..." << std::endl;
     // Add camera QR code detection logic here
+}
+
+void Sensor::boundingBoxCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg) {
+    for (const auto& box : msg->bounding_boxes) {
+        if box.Class == "person" {
+            std::cout << "Human Detected! Shutting Down" << std::endl;
+            //add shutdown logic
+        }
+    }
+}
+
+int main(int argc, char **argv) {
+    ros::init(argc, argv, "object_detection_node");
+    Sensor sensor;
+    ros::spin();
+    return 0;
 }
