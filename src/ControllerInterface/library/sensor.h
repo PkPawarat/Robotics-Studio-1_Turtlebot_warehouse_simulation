@@ -12,6 +12,7 @@
 #include "sensor_msgs/Range.h"
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
+#include "darknet_ros_msgs/BoundingBoxes.h"
 
 /**
  * @file Sensor.h
@@ -30,4 +31,5 @@ public:
     void simulateEnvironments();
     void detectObject();
     void detectQRCode();
+    void Sensor::boundingBoxCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg);
 };
