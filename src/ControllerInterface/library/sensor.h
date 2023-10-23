@@ -12,6 +12,7 @@
 #include "sensor_msgs/Range.h"
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
+#include "darknet_ros_msgs/BoundingBoxes.h"
 
 /**
  * @file Sensor.h
@@ -23,11 +24,16 @@
 
 class Sensor {
 private:
-    // ROSEnvironment rosEnv;
+    
 
 public:
     Sensor();
-    void simulateEnvironments();
-    void detectObject();
-    void detectQRCode();
+    // void simulateEnvironments();
+    void detectObject(sensor_msgs::LaserScan bot_laser_scan);
+    void detectQRCode(sensor_msgs::Image image_);
+
+public:
+// bot_laser_scan from ROSNode
+    sensor_msgs::Image raw_image_;
+
 };

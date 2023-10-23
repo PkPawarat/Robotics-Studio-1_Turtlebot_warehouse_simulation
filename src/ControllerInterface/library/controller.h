@@ -1,5 +1,6 @@
-#ifndef CONTROLLER
-#define CONTROLLER
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
+
 #include "sensor.h"
 #include <string>
 #include "controllerinterface.h"
@@ -33,6 +34,10 @@ class Controller : public ControllerInterface {
         Sensor sensor;
         bool targetDetected;
         bool qrCodeDetected;
+        bool obstacleDetected;
+        bool batteryLevel;
+        bool LIDARreading;
+        int battery;
         std::string currentTarget;
 
     public:
@@ -45,6 +50,12 @@ class Controller : public ControllerInterface {
         virtual void DriveTo(const std::string& location);
         virtual void PickUpTarget();
         virtual void DropTarget();
+
+        virtual void CheckObstacle();
+        virtual void CheckBattery();
+        virtual void Stop();
+        virtual void Charge();
+
 
         virtual void RePerentObject();
 

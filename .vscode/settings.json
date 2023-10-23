@@ -73,7 +73,8 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
-    },
-    "C_Cpp.errorSquiggles": "enabled"
+        "variant": "cpp",
+        "csignal": "cpp",
+        "any": "cpp"
+    }
 }
