@@ -6,6 +6,8 @@
 #include "ros/ros.h"
 #include <atomic>
 #include <mutex>
+#include <thread>
+#include <chrono>
 #include "visualization_msgs/MarkerArray.h"
 #include "std_srvs/SetBool.h"
 #include "nav_msgs/Odometry.h"
@@ -57,7 +59,20 @@ public:
      */
     nav_msgs::Odometry returnOdom();
 
+    /**
+     * @brief Returns a LaserScan message.
+     * @return sensor_msgs::LaserScan A LaserScan message.
+     */
+    sensor_msgs::LaserScan returnLaserScan();
+
+    /**
+     * @brief Returns an Image message.
+     * @return sensor_msgs::Image An Image message.
+     */
     sensor_msgs::Image returnImage();
+
+
+
 
     /**
      * @brief Send a command to control the robot's movement.
@@ -78,12 +93,15 @@ public:
     ros::Subscriber camera;
 
     ros::Publisher pub_vel;
+    ros::Publisher pub_goal;
     geometry_msgs::Twist bot_vel;
     nav_msgs::Odometry bot_odom;
     sensor_msgs::LaserScan bot_laser_scan;
     sensor_msgs::Image image_;
 
     std::mutex robotMtx_;
+
+    std::thread thread_;
     // std::mutex laserScanMtx_;
 };
 

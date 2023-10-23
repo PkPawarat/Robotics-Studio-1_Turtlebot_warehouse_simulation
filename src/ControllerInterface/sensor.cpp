@@ -15,23 +15,27 @@
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
 
+
 Sensor::Sensor() {
     // Initialize ROS environment
-    // rosEnv.simulate();
 }
 
-void Sensor::simulateEnvironments(){
-    // get data from ROS environment and display them?
-}
+// void Sensor::simulateEnvironments(){
+//     // get data from ROS environment and display them?
+//     raw_image_ = rosEnv.returnImage();
 
-void Sensor::detectObject() {
+// }
+
+void Sensor::detectObject(sensor_msgs::LaserScan bot_laser_scan) {
     // LIDAR object detection logic
     std::cout << "Detecting objects using LIDAR..." << std::endl;
-    // Add LIDAR object detection logic here
+    // Add LIDAR object detection logic her
 }
 
-void Sensor::detectQRCode() {
+void Sensor::detectQRCode(sensor_msgs::Image image_) {
     // Camera QR code detection logic
     std::cout << "Detecting QR codes using camera..." << std::endl;
     // Add camera QR code detection logic here
+    ROS_INFO_STREAM(image_);
+    
 }

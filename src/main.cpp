@@ -154,12 +154,9 @@ int main(int argc, char **argv) {
     ros::init(argc, argv, "ROSNode");
     ros::NodeHandle nh;
     ROSNode *rosnode = new ROSNode(nh);
-    while(ros::ok()){
-        // rosnode->sendCmd(0.1,0,0,0,0,0);
-        ROS_INFO_STREAM(rosnode->returnImage());
-        ROS_INFO_STREAM(rosnode->returnOdom());
-        ros::spin();
-    }
+    // rosnode->sendCmd(0.1,0,0,0,0,0);
+    ros::spin();
+    // ros::shutdown();
     
 
     // rosS->sendCmd(-1,0,0,0,0,0);
