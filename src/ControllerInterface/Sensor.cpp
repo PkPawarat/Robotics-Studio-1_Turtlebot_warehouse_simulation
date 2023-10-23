@@ -18,7 +18,7 @@
 
 
 //subscribing to darknet_ros nodes
-#include "darknet_ros_msgs/BoundingBoxes.h"
+//#include "darknet_ros_msgs/BoundingBoxes.h"
 
 
 class Sensor {
