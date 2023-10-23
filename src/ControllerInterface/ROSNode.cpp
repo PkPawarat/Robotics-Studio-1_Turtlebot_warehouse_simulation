@@ -16,9 +16,12 @@
 // #include "geometry_msgs/PoseStamped"
 
 #include "geometry_msgs/PoseArray.h"
+#include "std_msgs/Float64.h"
 
-ROSNode::ROSNode(ros::NodeHandle nh) : nh_(nh)
-{
+#include "geometry_msgs/PoseArray.h"
+#include <thread>
+
+ROSNode::ROSNode(ros::NodeHandle nh) : nh_(nh){
     odom = nh_.subscribe("/odom", 1, &ROSNode::odomCallBack, this);
     laser_scan = nh_.subscribe("/scan", 1, &ROSNode::laserScanCallBack, this);
     camera = nh_.subscribe("/usb_cam/image_raw", 1, &ROSNode::cameraCallBack, this);
@@ -27,6 +30,11 @@ ROSNode::ROSNode(ros::NodeHandle nh) : nh_(nh)
     // pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
     thread_ = std::thread(&ROSNode::simulate, this);
     thread_.detach();
+    // camera = nh_.subscribe("/camera/rgb/image_raw", 1000, &ROSNode::cameraCallBack, this);
+    // lidarSensor = nh_.subscribe("/sensor", 1000, &ROSNode::lidarCallBack, this);
+    // pub_vel = nh_.advertise<std_msgs::Float64>("/cmd_vel", 3, false);
+
+    pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
 }
 
 void ROSNode::simulate()

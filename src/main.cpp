@@ -9,227 +9,118 @@
 #include "MissionInterface/library/missionInterface.h"
 #include "MissionInterface/library/mission.h"
 
+#include "ros/ros.h"
+#include <thread>
+#include <nav_msgs/Odometry.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
 
+ros::Publisher initialPosePublisher;
+ros::Subscriber odom;
 
-void printGrid(const std::vector<std::vector<int>>& grid, const std::vector<Cell>& path = std::vector<Cell>()) {
-    // Create a copy of the grid to mark the path
-    std::vector<std::vector<std::string>> pathGrid(grid.size(), std::vector<std::string>(grid[0].size()));
-
-    for (size_t i = 0; i < pathGrid.size(); i++) {
-        for (size_t j = 0; j < pathGrid[0].size(); j++) {
-            pathGrid[i][j] = std::to_string(grid[i][j]); // Initialize with obstacles or empty spaces
-        }
-    }
-
-    for (const Cell& cell : path) {
-        pathGrid[cell.row][cell.col] = "*"; // Mark path cells with asterisk
-    }
-
-    // Print the path-marked grid
-    for (size_t i = 0; i < pathGrid.size(); i++) {
-        for (size_t j = 0; j < pathGrid[0].size(); j++) {
-            std::cout << pathGrid[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-}
-
-// Function to trim leading and trailing spaces from a string
-std::string trim(const std::string& s) {
-    size_t start = s.find_first_not_of(" \t\r\n");
-    size_t end = s.find_last_not_of(" \t\r\n");
-    if (start == std::string::npos || end == std::string::npos) {
-        // String is empty or contains only spaces
-        return "";
-    }
-    return s.substr(start, end - start + 1);
-}
-
-// // Function to convert cell values to symbols
-// std::string convertCellValue(const std::string& cellValue) {
-//     // Split the cellValue into prefix and value
-//     std::istringstream iss(cellValue);
-//     std::string prefix, value;
+void odomCallback(const nav_msgs::Odometry::ConstPtr& odomMsg) {
+    // Create a message to publish to /initialpose
+    geometry_msgs::PoseWithCovarianceStamped initialPoseMsg;
     
-//     if (std::getline(iss, prefix, ' ')) {
-//         std::getline(iss, value);
-//         if (value.empty()) {
-//             value = cellValue;
-//         }
-//     } else {
-//         // No comma-separated prefix found, use the entire cellValue as value
-//         value = cellValue;
-//     }
+    // Extract relevant data from the odomMsg and set it in initialPoseMsg
+    initialPoseMsg.pose.pose = odomMsg->pose.pose;
+    std::string map = "map";
+    initialPoseMsg.header.frame_id = map;
+    // Publish the initial pose message
+    initialPosePublisher.publish(initialPoseMsg);
 
-//     // Remove spaces from the value
-//     value.erase(std::remove_if(value.begin(), value.end(), ::isspace), value.end());
+    // Unsubscribe after receiving one message
+    ros::topic::waitForMessage<nav_msgs::Odometry>("/odom", ros::Duration(1.0)); // Wait for one message
+    ros::shutdown();
+}
 
-//     static std::unordered_map<std::string, std::string> cellMappings = {
-//         {"L", "←"},
-//         {"R", "→"},
-//         {"U", "↑"},
-//         {"D", "↓"},
-//         {"U&D", "↕"},
-//         {"L&R", "↔"},
-//         {"U&L", "←↑"},
-//         {"U&R", "↑→"},
-//         {"D&L", "←↓"},
-//         {"D&R", "↓→"},
-//         {"U&D&L", "←↕"},
-//         {"U&D&R", "↕→"},
-//         {"U&L&R", "↑↔"},
-//         {"D&L&R", "↓↔"},
-//         {"U&D&L&R", "+"}
-//     };
-
-//     // Check if the prefix is one of P, W, or C
-//     if (prefix == "P" || prefix == "W" || prefix == "C") {
-//         auto it = cellMappings.find(value);
-//         if (it != cellMappings.end()) {
-//             return prefix + it->second;
-//         } else {
-//             return cellValue; // Return the original value if not found in mappings
-//         }
-//     } else {
-//         auto it = cellMappings.find(value);
-//         if (it != cellMappings.end()) {
-//             return it->second;
-//         } else {
-//             return value; // Return the original value if not found in mappings
-//         }
-//     }
-// }
-
-
-// int main() {
-//     // Open the CSV file
-//     std::ifstream wb("/home/pawarat/Robotics-Studio-1/PlatLocation1.csv");
-
-//     // Check if the file opened successfully
-//     if (!wb.is_open()) {
-//         std::cerr << "Error: Could not open the CSV file." << std::endl;
-//         return 1;
-//     }
-
-//     // Define variables to store the CSV data
-//     std::vector<std::vector<std::string>> grid;
-//     std::string line;
-
-//     // Read and process each line of the CSV file
-//     while (std::getline(wb, line)) {
-//         std::vector<std::string> rowData;
-//         std::istringstream ss(line);
-//         std::string cell;
-
-//         // Split each line into comma-separated values
-//         while (std::getline(ss, cell, ',')) {
-//             // Trim leading and trailing spaces from the cell value
-//             cell = trim(cell);
-//             // Convert the cell value to the corresponding symbol
-//             cell = convertCellValue(cell);
-//             rowData.push_back(cell);
-//         }
-
-//         // Add the row data to the grid
-//         grid.push_back(rowData);
-//     }
-
-//     // Close the file
-//     wb.close();
-
-//     // Print the grid
-//     std::cout << "Grid read from CSV file:" << std::endl;
-//     for (const std::vector<std::string>& row : grid) {
-//         for (const std::string& cellValue : row) {
-//             std::cout << cellValue << " ";
-//         }
-//         std::cout << std::endl;
-//     }
-
+// int main(int argc, char **argv) {
+//     ros::init(argc, argv, "my_robot_node");
+//     ros::NodeHandle nh;
+//     Controller controller = Controller();
+//     ROSNode rosNode(nh);
+//     ros::spin();
+//     ros::shutdown();
+//     // t.join();
 //     return 0;
 // }
 
-int main(int argc, char **argv) {
-    // Replace "your_excel_file.xlsx" with the path to your Excel file
-    ros::init(argc, argv, "ROSNode");
-    ros::NodeHandle nh;
-    ROSNode *rosnode = new ROSNode(nh);
-    // rosnode->sendCmd(0.1,0,0,0,0,0);
-    ros::spin();
-    // ros::shutdown();
-    
+// Test initial pose 
+// int main(int argc, char** argv) {
+//     ros::init(argc, argv, "odom_to_initialpose");
+//     ros::NodeHandle nh;
+//     // Create a publisher for the /initialpose topic
+//     odom = nh.subscribe("/odom", 1, &odomCallback);
+//     initialPosePublisher = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/initialpose", 1);
+//     // Spin to process incoming messages
+//     ros::spin();
+//     ros::shutdown();
+//     return 0;
+// }
 
-    // rosS->sendCmd(-1,0,0,0,0,0);
+int main() {
+    // Create an instance of the PathPlanning class
+    PathPlanning pathFinder;
 
-    // ros::shutdown();
-    //SORRY IM DOING SOME TESTING - LAUREN
-    // std::string excelFilePath = "/home/pk/git/Robotics-Studio-1/ExcelFile/PlatLocation1.csv";
-    // // /home/pk/git/Robotics-Studio-1/ExcelFile
-    // // /home/pawarat/git/Robotics-Studio-1/ExcelFile
+    // Add nodes and edges to the path planner
+    std::vector<Node> nodes;/* Initialize your nodes */
+    // Add 20 nodes with X and Y coordinates
+    nodes.push_back({0.0, 0.0});
+    nodes.push_back({1.0, 1.0});
+    nodes.push_back({2.0, 2.0});
+    nodes.push_back({3.0, 3.0});
+    nodes.push_back({4.0, 4.0});
+    nodes.push_back({5.0, 5.0});
+    nodes.push_back({6.0, 6.0});
+    nodes.push_back({7.0, 7.0});
+    nodes.push_back({8.0, 8.0});
+    nodes.push_back({9.0, 9.0});
+    nodes.push_back({10.0, 10.0});
+    nodes.push_back({11.0, 11.0});
+    nodes.push_back({12.0, 12.0});
+    nodes.push_back({13.0, 13.0});
+    nodes.push_back({14.0, 14.0});
+    nodes.push_back({15.0, 15.0});
+    nodes.push_back({16.0, 16.0});
+    nodes.push_back({17.0, 17.0});
+    nodes.push_back({18.0, 18.0});
+    nodes.push_back({19.0, 19.0});
+    pathFinder.AutumeticAddingEdge(nodes);
 
-    // // Create an instance of the platFinding class
-    // platFinding pathFinder(excelFilePath);
+    while (true) {
+        // Prompt the user for start and goal nodes
+        Node start, goal;
+        std::cout << "Enter start node (X Y): ";
+        std::cin >> start.X >> start.Y;
+        std::cout << "Enter goal node (X Y): ";
+        std::cin >> goal.X >> goal.Y;
 
-    // // Define the start and goal cells
-    // Cell start = {0, 0};
-    // Cell goal = {5, 5};
+        // Find the closest nodes to the specified coordinates
+        start = pathFinder.FindClosestNode(nodes, start);
+        goal = pathFinder.FindClosestNode(nodes, goal);
 
-    // // Find the path from start to goal
-    // std::vector<Cell> path = pathFinder.FindPath(start, goal);
+        // Find the shortest path
+        std::vector<Node> path = pathFinder.ShortestPath(start, goal);
 
-    // // Print the path
-    // std::cout << "Path from (" << start.row << "," << start.col << ") to (" << goal.row << "," << goal.col << "):" << std::endl;
-    // for (const Cell& cell : path) {
-    //     std::cout << "(" << cell.row << "," << cell.col << ") ";
-    // }
-    // std::cout << std::endl;
+        // Display the path
+        if (!path.empty()) {
+            std::cout << "Shortest path from (" << start.X << "," << start.Y << ") to (" << goal.X << "," << goal.Y << "):" << std::endl;
+            for (const Node& node : path) {
+                std::cout << "(" << node.X << "," << node.Y << ") ";
+            }
+            std::cout << std::endl;
+        } else {
+            std::cout << "No path found from (" << start.X << "," << start.Y << ") to (" << goal.X << "," << goal.Y << ")." << std::endl;
+        }
 
-    // printGrid(pathFinder.grid);
-    // END HERE THANKS
+        // Ask the user if they want to continue or exit
+        std::cout << "Do you want to find another path? (y/n): ";
+        char choice;
+        std::cin >> choice;
+
+        if (choice != 'y' && choice != 'Y') {
+            break; // Exit the loop if the user chooses not to continue
+        }
+    }
+
     return 0;
 }
-
-
-// int main() {
-//     // std::ifstream wb("/home/pawarat/Robotics-Studio-1/PlatLocation1.csv");
-    
-    
-    
-    
-    
-    
-//     // Create an instance of platFinding with the path to your Excel file
-//     platFinding finder("/home/pawarat/Robotics-Studio-1/PlatLocation1.csv");
-
-//     // Get the grid from platFinding
-//     std::vector<std::vector<int>> grid = finder.grid;
-
-//     // Print the grid
-//     std::cout << "Grid read from Excel file:" << std::endl;
-//     for (const std::vector<int>& row : grid) {
-//         for (int cellValue : row) {
-//             std::cout << cellValue << " ";
-//         }
-//         std::cout << std::endl;
-//     }
-
-//     // Define the start and goal cells
-//     Cell start = {0, 0};  // Replace with your actual start cell
-//     Cell goal = {4, 4};   // Replace with your actual goal cell
-
-//     // Find the path
-//     std::vector<Cell> path = finder.FindPath(start, goal);
-
-//     // Print the path
-//     if (!path.empty()) {
-//         std::cout << "Path found:" << std::endl;
-//         for (const Cell& cell : path) {
-//             std::cout << "(" << cell.row << ", " << cell.col << ") -> ";
-//         }
-//         std::cout << "Goal" << std::endl;
-//     } else {
-//         std::cout << "No path found." << std::endl;
-//     }
-
-//     return 0;
-// }

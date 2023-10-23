@@ -17,61 +17,42 @@
 #include <string>
 #include <vector>
 
+#include <vector>
+#include <unordered_map>
+#include <queue>
+#include <set>
+#include <limits>
 
-struct Cell {
-    int row;
-    int col;
-};
+using namespace std;
 
-struct CellCompare {
-    bool operator()(const Cell& lhs, const Cell& rhs) const {
-        return std::tie(lhs.row, lhs.col) < std::tie(rhs.row, rhs.col);
-    }
-};
-
-struct CostCellPair {
-    double cost;
-    Cell cell;
-
-    CostCellPair(double _cost, const Cell& _cell) : cost(_cost), cell(_cell) {}
-
-    bool operator>(const CostCellPair& other) const {
-        return cost > other.cost;
-    }
-
-    bool operator<(const CostCellPair& other) const {
-        return cost < other.cost;
-    }
-};
-
-class platFinding {
-private:
-    // std::vector<std::vector<int>> grid;
-    int rows;
-    int columns;
-
-    // std::vector<Cell> GetNeighbors(Cell cell);
-    // double CalculateHeuristic(Cell cell, Cell goal);
-    // std::vector<Cell> ReconstructPath(std::map<Cell, Cell, CellCompare> cameFrom, Cell current);
-
+class Node {
 public:
-    platFinding(const std::string& excelFilePath);
-    std::vector<Cell> FindPath(Cell start, Cell goal);
+    double X, Y;
+    Node() : X(0), Y(0) {}
+    Node(double x, double y) : X(x), Y(y) {}
 
+    bool operator==(const Node& other) const;
+    bool operator<(const Node& other) const;
+};
 
-    std::vector<Cell> GetNeighbors(Cell cell);
+namespace std {
+    template <>
+    struct hash<Node> {
+        size_t operator()(const Node& node) const;
+    };
+}
 
-    double CalculateHeuristic(Cell cell, Cell goal);
+class PathPlanning {
+public:
+    unordered_map<Node, vector<pair<Node, double>>> graph;
+    double MaxDistanceNode = 1.4;
 
-
-    std::vector<Cell> ReconstructPath(std::map<Cell, Cell, CellCompare> cameFrom, Cell current) ;
-  
-    std::vector<std::vector<int>> grid;
-
-    std::string convertCellValue(const std::string& cellValue); // Add the function here
-
-    int symbolToInt(const std::string& symbol);
-
+    void AddEdge(const Node& from, const Node& to, double cost);
+    void AutumeticAddingEdge(const vector<Node>& AllNode);
+    vector<Node> ShortestPath(const Node& start, const Node& destination);
+    Node FindClosestNode(const std::vector<Node>& nodes, const Node& target);
+    void DrawMap(const std::vector<Node>& locations, double precision);
+    void DrawMapWithShortestPath(const std::vector<Node>& locations, const std::vector<Node>& shortestPath, double precision) ;
 };
 
 #endif // PATHFINDING_H

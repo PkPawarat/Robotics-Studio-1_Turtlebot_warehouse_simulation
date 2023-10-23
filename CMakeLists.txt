@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.1)
-project(robotics-Studio-1)
+project(robotics-studio-1)
 
 # This pacakge depends on a5_setup, beacuse it uses a service declared there
 find_package(catkin REQUIRED COMPONENTS
@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   rosbag # Needed to rosbag manipulation
   roslib # Needed for ros::package::getPath
+  move_base_msgs  
 )
 
 ## System dependencies are found with CMake's conventions
@@ -71,10 +72,11 @@ target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}
 ## Testing ##
 #############
 # ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}_test test/utest.cpp )
-# if(TARGET ${PROJECT_NAME}_test)
-#    target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor )
-#    target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding )
-#    target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_controller )
-#    message ( STATUS " catkin_LIBRARIES ${catkin_LIBRARIES}")
-# endif()
+catkin_add_gtest(${PROJECT_NAME}_test test/utest.cpp )
+if(TARGET ${PROJECT_NAME}_test)
+   target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor )
+   target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding )
+   target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_controller )
+  target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_rosnode)
+message ( STATUS " catkin_LIBRARIES ${catkin_LIBRARIES}")
+endif()
