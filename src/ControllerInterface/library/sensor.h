@@ -24,12 +24,16 @@
 
 class Sensor {
 private:
-    // ROSEnvironment rosEnv;
+    
 
 public:
     Sensor();
-    void simulateEnvironments();
-    void detectObject();
-    void detectQRCode();
-    void Sensor::boundingBoxCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg);
+    // void simulateEnvironments();
+    void detectObject(sensor_msgs::LaserScan bot_laser_scan);
+    void detectQRCode(sensor_msgs::Image image_);
+
+public:
+// bot_laser_scan from ROSNode
+    sensor_msgs::Image raw_image_;
+
 };

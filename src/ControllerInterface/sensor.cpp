@@ -37,20 +37,24 @@ Sensor::Sensor() {
     ros::Subscriber sub = nh.subscribe("darknet_ros/bounding_boxes", 1000, &Sensor::boundingBoxCallback, this);
 }
 
-void Sensor::simulateEnvironments(){
-    // get data from ROS environment and display them?
-}
+// void Sensor::simulateEnvironments(){
+//     // get data from ROS environment and display them?
+//     raw_image_ = rosEnv.returnImage();
 
-void Sensor::detectObject() {
+// }
+
+void Sensor::detectObject(sensor_msgs::LaserScan bot_laser_scan) {
     // LIDAR object detection logic
     std::cout << "Detecting objects using LIDAR..." << std::endl;
-    // Add LIDAR object detection logic here
+    // Add LIDAR object detection logic her
 }
 
-void Sensor::detectQRCode() {
+void Sensor::detectQRCode(sensor_msgs::Image image_) {
     // Camera QR code detection logic
     std::cout << "Detecting QR codes using camera..." << std::endl;
     // Add camera QR code detection logic here
+    ROS_INFO_STREAM(image_);
+    
 }
 
 void Sensor::boundingBoxCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg) {

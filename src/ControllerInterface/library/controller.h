@@ -1,5 +1,6 @@
-#ifndef CONTROLLER
-#define CONTROLLER
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
+
 #include "sensor.h"
 #include <string>
 #include "controllerinterface.h"
