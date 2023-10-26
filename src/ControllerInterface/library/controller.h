@@ -1,14 +1,3 @@
-/**
- * @file controller.h
- * @author Pawarat Phatthanaphusakun, Maximilian Deda
- * @brief This header file covers the controller class and initialises all variables and functions used within it. It is used to control the robots motion and interactions
- * @version 0.1
- * @date 2023-10-08
- * 
- * @copyright Copyright (c) 2023
- * 
- */
-
 #ifndef CONTROLLER
 #define CONTROLLER
 #include "sensor.h"
@@ -26,135 +15,47 @@
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
 
-/**
- * @brief Initialises the Controller Class as a subsclass from the Parent ControllerInterface Class
- * 
+/*!
+ *  \brief     Controller Class
+ *  \details
+ *  Brief Description: The "Controller" class serves as a foundational template for developing autonomous vehicle controller classes. 
+ *  It is intended for use as a base class, and its methods, as defined in the interface class, are crucial for implementing and testing autonomous vehicle control.
+ *  \author    Pawarat Phatthanaphusakun
+ *  \version   1.01
+ *  \date      2023-08-28
+ *  \pre       none
+ *  \bug
+ *  \warning   EVERYONE MUST NOT change this class (the header file)
  */
 
 class Controller : public ControllerInterface {
     private:
-        /**
-         * @brief Initialises the sensor variable
-         * 
-         */
         Sensor sensor;
-
-        /**
-         * @brief Initialises the targetDetected variable as a boolean
-         * 
-         */
         bool targetDetected;
-
-        /**
-         * @brief Initialises the qrCodeDetected variable as a boolean
-         * 
-         */
         bool qrCodeDetected;
-
-        /**
-         * @brief Initialises the obstacleDetected variable as a boolean
-         * 
-         */
         bool obstacleDetected;
-
-        /**
-         * @brief Initialises the batteryLevel variable as a boolean
-         * 
-         */
         bool batteryLevel;
-
-        /**
-         * @brief Initialises the currentTarget variable as a string
-         * 
-         */
+        bool LIDARreading;
+        int battery;
         std::string currentTarget;
 
     public:
-        /**
-         * @brief Construct a new Controller object
-         * 
-         */
         Controller();
-
-
-        /**
-         * @brief Initialises the SetTargets function
-         * 
-         */
         virtual void SetTargets(std::vector<geometry_msgs::Point>);
-
-        /**
-         * @brief Initialises the Execute function
-         * 
-         */
         virtual void Execute();
-
-        /**
-         * @brief Initialises the CheckTarget function
-         * 
-         */
         virtual void CheckTarget();
-
-        /**
-         * @brief Initialises the AssignTarget function
-         * 
-         * @param target Creates a constant string variable "target" for use in the function
-         */
         virtual void AssignTarget(const std::string& target);
-
-        /**
-         * @brief Initialises the CheckQRCode function
-         * 
-         */
         virtual void CheckQRCode();
-
-        /**
-         * @brief Initialises the DriveTo function
-         * 
-         * @param location Creates a constant string variable "location" for use in the function
-         */
         virtual void DriveTo(const std::string& location);
-
-        /**
-         * @brief Initialises the PickUpTarget function
-         * 
-         */
         virtual void PickUpTarget();
-
-        /**
-         * @brief Initialises the DropTarget function
-         * 
-         */
         virtual void DropTarget();
 
-        /**
-         * @brief Initialises the CheckObstacle function
-         * 
-         */
         virtual void CheckObstacle();
-
-        /**
-         * @brief Initialises the CheckBattery function
-         * 
-         */
         virtual void CheckBattery();
-
-        /**
-         * @brief Initialises the Stop function
-         * 
-         */
         virtual void Stop();
-
-        /**
-         * @brief Initialises the Charge function
-         * 
-         */
         virtual void Charge();
 
-        /**
-         * @brief Initialises the RePerentObject function
-         * 
-         */
+
         virtual void RePerentObject();
 
         

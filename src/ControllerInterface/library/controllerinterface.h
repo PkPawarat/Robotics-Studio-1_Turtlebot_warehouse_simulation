@@ -39,6 +39,11 @@ class ControllerInterface
     virtual void DriveTo(const std::string &location) = 0 ;
     virtual void PickUpTarget() = 0 ;
     virtual void DropTarget() = 0 ;
+    
+    virtual void CheckObstacle() = 0;
+    virtual void CheckBattery() = 0;
+    virtual void Stop() = 0;
+    virtual void Charge() = 0;
     virtual void RePerentObject() = 0;
 };
 

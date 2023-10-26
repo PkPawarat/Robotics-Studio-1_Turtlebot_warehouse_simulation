@@ -12,10 +12,14 @@ find_package(catkin REQUIRED COMPONENTS
   move_base_msgs  
 )
 
+find_package(gazebo REQUIRED)
+
 ## System dependencies are found with CMake's conventions
 #find_package(Boost REQUIRED COMPONENTS system signals)
 find_package(Eigen3 REQUIRED)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wdeprecated-declarations")
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 message ( STATUS " CMake C++ FLAGS ${CMAKE_CXX_FLAGS}")
@@ -48,13 +52,17 @@ include_directories(
   src
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
+  ${GAZEBO_INCLUDE_DIRS}
 )
+
+link_directories(${GAZEBO_LIBRARY_DIRS})
 
 ## Declare a C++ library
 add_library(${PROJECT_NAME}_sensor src/ControllerInterface/Sensor.cpp)
 add_library(${PROJECT_NAME}_controller src/ControllerInterface/controller.cpp)
 add_library(${PROJECT_NAME}_pathfinding src/ControllerInterface/pathfinding.cpp)
 add_library(${PROJECT_NAME}_rosnode src/ControllerInterface/ROSNode.cpp)
+add_library(${PROJECT_NAME}_movemodelplugin src/ControllerInterface/MoveModelPlugin.cpp)
 
 ## Declare a C++ executable
 add_executable(${PROJECT_NAME}_sample src/main.cpp src/ControllerInterface/controller.cpp src/ControllerInterface/Sensor.cpp src/ControllerInterface/pathfinding.cpp src/ControllerInterface/ROSNode.cpp)
@@ -69,6 +77,7 @@ add_dependencies(${PROJECT_NAME}_sample ${${PROJECT_NAME}_EXPORTED_TARGETS} ${ca
 target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor)
 target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_controller)
 target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding)
+target_link_libraries(${PROJECT_NAME}_sample ${GAZEBO_LIBRARIES} ${PROJECT_NAME}_movemodelplugin)
 
 #############
 ## Testing ##
