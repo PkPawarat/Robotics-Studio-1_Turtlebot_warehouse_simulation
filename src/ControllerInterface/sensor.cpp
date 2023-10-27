@@ -18,23 +18,23 @@
 
 
 //subscribing to darknet_ros nodes
-#include "darknet_ros_msgs/BoundingBoxes.h"
+// #include "darknet_ros_msgs/BoundingBoxes.h"
 
 
-class Sensor {
-    public:
-    Sensor();
-    void simulateEnvironments();
-    void detectObject();
-    void detectQRCode();
-    void boundingBoxCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg);
-}
+// class Sensor {
+//     public:
+//     Sensor();
+//     void simulateEnvironments();
+//     void detectObject();
+//     void detectQRCode();
+//     // void boundingBoxCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg);
+// }
 
 Sensor::Sensor() {
     // Initialize ROS environment
     // rosEnv.simulate();
     ros::NodeHandle nh;
-    ros::Subscriber sub = nh.subscribe("darknet_ros/bounding_boxes", 1000, &Sensor::boundingBoxCallback, this);
+    // ros::Subscriber sub = nh.subscribe("darknet_ros/bounding_boxes", 1000, &Sensor::boundingBoxCallback, this);
 }
 
 // void Sensor::simulateEnvironments(){
@@ -49,6 +49,10 @@ void Sensor::detectObject(sensor_msgs::LaserScan bot_laser_scan) {
     // Add LIDAR object detection logic her
 }
 
+void Sensor::detectShelf(sensor_msgs::PointCloud2 point_cloud){
+    
+}
+
 void Sensor::detectQRCode(sensor_msgs::Image image_) {
     // Camera QR code detection logic
     std::cout << "Detecting QR codes using camera..." << std::endl;
@@ -57,18 +61,18 @@ void Sensor::detectQRCode(sensor_msgs::Image image_) {
     
 }
 
-void Sensor::boundingBoxCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg) {
-    for (const auto& box : msg->bounding_boxes) {
-        if box.Class == "person" {
-            std::cout << "Human Detected! Shutting Down" << std::endl;
-            //add shutdown logic
-        }
-    }
-}
+// void Sensor::boundingBoxCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg) {
+//     for (const auto& box : msg->bounding_boxes) {
+//         if box.Class == "person" {
+//             std::cout << "Human Detected! Shutting Down" << std::endl;
+//             //add shutdown logic
+//         }
+//     }
+// }
 
-int main(int argc, char **argv) {
-    ros::init(argc, argv, "object_detection_node");
-    Sensor sensor;
-    ros::spin();
-    return 0;
-}
+// int main(int argc, char **argv) {
+//     ros::init(argc, argv, "object_detection_node");
+//     Sensor sensor;
+//     ros::spin();
+//     return 0;
+// }

@@ -16,6 +16,11 @@
 #include "geometry_msgs/PoseArray.h"
 #include "sensor_msgs/Image.h"
 #include "sensor_msgs/CameraInfo.h"
+#include "sensor_msgs/PointCloud2.h"
+#include "geometry_msgs/PoseStamped.h"
+#include "std_msgs/Float64.h"
+
+
 
 /**
  * @class ROSEnvironment
@@ -53,6 +58,8 @@ public:
      */
     void cameraCallBack(const sensor_msgs::ImageConstPtr &msg);
 
+    void pointCloudCallBack(const sensor_msgs::PointCloud2ConstPtr &msg);
+
     /**
      * @brief Get the latest odometry data.
      * @return The latest Odometry message.
@@ -71,6 +78,8 @@ public:
      */
     sensor_msgs::Image returnImage();
 
+    sensor_msgs::PointCloud2 returnPointCloud();
+
 
 
 
@@ -83,14 +92,22 @@ public:
      * @param angular_y The angular velocity in the y-axis.
      * @param angular_z The angular velocity in the z-axis.
      */
-    void sendCmd(int linear_x, int linear_y, int linear_z, int angular_x, int angular_y, int angular_z);
+    void sendCmd(double linear_x, double linear_y, double linear_z, double angular_x, double angular_y, double angular_z);
 
 public:
+    struct Point {
+        float x;
+        float y;
+        float z;
+    };
+
+    std::vector<Point> pcl_points;
     ros::NodeHandle nh_;
 
     ros::Subscriber odom;
     ros::Subscriber laser_scan;
     ros::Subscriber camera;
+    ros::Subscriber camera_depth;
 
     ros::Publisher pub_vel;
     ros::Publisher pub_goal;
@@ -98,6 +115,7 @@ public:
     nav_msgs::Odometry bot_odom;
     sensor_msgs::LaserScan bot_laser_scan;
     sensor_msgs::Image image_;
+    sensor_msgs::PointCloud2 point_cloud;
 
     std::mutex robotMtx_;
 
