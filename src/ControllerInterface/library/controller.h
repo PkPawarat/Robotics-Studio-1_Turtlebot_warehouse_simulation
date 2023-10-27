@@ -14,6 +14,7 @@
 #include "nav_msgs/Odometry.h"
 #include "sensor_msgs/Range.h"
 #include "sensor_msgs/LaserScan.h"
+#include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/PoseArray.h"
 
 /*!
