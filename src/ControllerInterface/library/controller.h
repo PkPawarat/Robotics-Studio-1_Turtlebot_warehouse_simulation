@@ -1,5 +1,6 @@
-#ifndef CONTROLLER
-#define CONTROLLER
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
+
 #include "sensor.h"
 #include <string>
 #include "controllerinterface.h"
@@ -13,6 +14,7 @@
 #include "nav_msgs/Odometry.h"
 #include "sensor_msgs/Range.h"
 #include "sensor_msgs/LaserScan.h"
+#include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/PoseArray.h"
 
 /*!

@@ -74,7 +74,7 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "csignal": "cpp"
-    },
-    "C_Cpp.errorSquiggles": "enabled"
+        "csignal": "cpp",
+        "any": "cpp"
+    }
 }

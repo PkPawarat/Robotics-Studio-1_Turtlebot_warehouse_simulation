@@ -120,8 +120,30 @@ Now, you have successfully created a new branch and switched to it. You can star
 ## Using our world 
 
         roslaunch turtlebot3_gazebo final_warehouse.launch
-        
 
+
+## Darknet_ros
+
+Darknet_ros is an object detection tool used to identify select ojbects. This package will be used alongside our program to detect unknown obstacles and cease all operations.
+
+To use this, clone the repository in your workspace alongside the Robotics Studio repository.
+
+        git clone --recursive git@github.com:leggedrobotics/darknet_ros.git
+
+To maximise performance, build in release mode:
+
+        catkin_make -DCMAKE_BUILD_TYPE=Release
+
+For users who have NVIDIA graphics cards, see github for more information: https://github.com/leggedrobotics/darknet_ros#installation 
+
+To use the tool, run your gazebo model:
+
+        roslaunch my_custom_world_gazebo large_warehouse.launch 
+
+and then the package:
+
+        roslaunch darknet_ros darknet_ros.launch
+        
 
 ## NOTICE: when pull this project from git delete Build folder then do this command in terminal (need to do everytime)
 Create Cmake build
