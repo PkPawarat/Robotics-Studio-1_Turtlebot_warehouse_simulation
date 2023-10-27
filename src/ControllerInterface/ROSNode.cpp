@@ -29,7 +29,7 @@ void ROSNode::simulate()
     // Add ROS simulation logic here
     std::this_thread::sleep_for(std::chrono::seconds(2));
     // ROS_INFO_STREAM(bot_odom);
-    ROS_INFO_STREAM(point_cloud);
+    ROS_INFO_STREAM(pcl_points.size());
     // ROS_INFO_STREAM(point_cloud.width);
     
 }
@@ -58,30 +58,24 @@ void ROSNode::cameraCallBack(const sensor_msgs::ImageConstPtr &msg)
 void ROSNode::pointCloudCallBack(const sensor_msgs::PointCloud2ConstPtr &msg)
 { // Type: sensor_msgs/Image
     robotMtx_.lock();
-    point_cloud = *msg;
 
+    sensor_msgs::PointCloud2 input_pointcloud = *msg;
+    sensor_msgs::PointCloud out_pointcloud;
+    sensor_msgs::convertPointCloud2ToPointCloud(input_pointcloud, out_pointcloud);
 
-    // pcl::PCLPointCloud2 pcl_cloud;
-    // pcl_conversions::toPCL(point_cloud, pcl_cloud);
+    std::vector<geometry_msgs::Point32> temp_;
 
-    // pcl::PointCloud<pcl::PointXYZ> pcl_xyz_cloud;
-    // pcl::fromPCLPointCloud2(pcl_cloud, pcl_xyz_cloud);
+    for(int i = 0 ; i < out_pointcloud.points.size(); ++i){
+        geometry_msgs::Point32 point;
 
-    // std::vector<Point> temp_;
-    // // Now, you can access the points in pcl_xyz_cloud
-    // for (const pcl::PointXYZ& point : pcl_xyz_cloud.points)
-    // {
-    //     Point point_coords;
-        
-    //     point_coords.x = point.x;
-    //     point_coords.y = point.y;
-    //     point_coords.z = point.z;
+        //Dooo something here
+        point.x = out_pointcloud.points[i].x;
+        point.y = out_pointcloud.points[i].y;
+        point.z = out_pointcloud.points[i].z;
 
-    //     temp_.push_back(point_coords);
-
-    // }
-
-    // pcl_points = temp_;
+        temp_.push_back(point);
+    }
+    pcl_points = temp_;
     robotMtx_.unlock();
 }
 

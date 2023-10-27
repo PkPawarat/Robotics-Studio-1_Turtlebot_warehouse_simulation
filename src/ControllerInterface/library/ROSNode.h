@@ -14,10 +14,13 @@
 #include "sensor_msgs/Range.h"
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
+#include "geometry_msgs/Point32.h"
 #include "sensor_msgs/Image.h"
 #include "sensor_msgs/CameraInfo.h"
 #include "sensor_msgs/PointCloud2.h"
+#include "sensor_msgs/PointCloud.h"
 #include "geometry_msgs/PoseStamped.h"
+#include "sensor_msgs/point_cloud_conversion.h"
 #include "std_msgs/Float64.h"
 
 
@@ -101,7 +104,7 @@ public:
         float z;
     };
 
-    std::vector<Point> pcl_points;
+    std::vector<geometry_msgs::Point32> pcl_points;
     ros::NodeHandle nh_;
 
     ros::Subscriber odom;
