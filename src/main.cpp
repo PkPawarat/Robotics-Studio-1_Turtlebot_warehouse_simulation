@@ -38,6 +38,7 @@ int main(int argc, char **argv) {
     ros::NodeHandle nh;
     // Controller controller = Controller();
     ROSNode rosNode(nh);
+    // Sensor sensor;
     ros::spin();
     ros::shutdown();
     // t.join();

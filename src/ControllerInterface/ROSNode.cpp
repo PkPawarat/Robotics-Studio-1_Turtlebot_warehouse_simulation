@@ -12,6 +12,7 @@ ROSNode::ROSNode(ros::NodeHandle nh) : nh_(nh){
 // 
     pub_vel = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 3, false);
     pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
+    // std::this_thread::sleep_for(std::chrono::seconds(5));
     // pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
     thread_ = std::thread(&ROSNode::simulate, this);
     thread_.detach();
@@ -28,8 +29,18 @@ void ROSNode::simulate()
     std::cout << "Simulating environment using ROS..." << std::endl;
     // Add ROS simulation logic here
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    // ROS_INFO_STREAM(bot_odom);
-    ROS_INFO_STREAM(pcl_points.size());
+    ROS_INFO_STREAM(bot_odom);
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    Sensor sensor;
+    sensor.detectShelf(returnPointCloud());
+
+    ROS_INFO_STREAM(returnPointCloud().size());
+
+    // if (pcl_points.size() > 0){
+    //     ROS_INFO_STREAM('true');
+    // }else{
+    //     ROS_INFO_STREAM('false');
+    // }
     // ROS_INFO_STREAM(point_cloud.width);
     
 }
@@ -58,24 +69,7 @@ void ROSNode::cameraCallBack(const sensor_msgs::ImageConstPtr &msg)
 void ROSNode::pointCloudCallBack(const sensor_msgs::PointCloud2ConstPtr &msg)
 { // Type: sensor_msgs/Image
     robotMtx_.lock();
-
-    sensor_msgs::PointCloud2 input_pointcloud = *msg;
-    sensor_msgs::PointCloud out_pointcloud;
-    sensor_msgs::convertPointCloud2ToPointCloud(input_pointcloud, out_pointcloud);
-
-    std::vector<geometry_msgs::Point32> temp_;
-
-    for(int i = 0 ; i < out_pointcloud.points.size(); ++i){
-        geometry_msgs::Point32 point;
-
-        //Dooo something here
-        point.x = out_pointcloud.points[i].x;
-        point.y = out_pointcloud.points[i].y;
-        point.z = out_pointcloud.points[i].z;
-
-        temp_.push_back(point);
-    }
-    pcl_points = temp_;
+    point_cloud = *msg;
     robotMtx_.unlock();
 }
 
@@ -95,8 +89,26 @@ sensor_msgs::Image ROSNode::returnImage()
 }
 
 
-sensor_msgs::PointCloud2 ROSNode::returnPointCloud(){
-    return point_cloud;
+
+std::vector<geometry_msgs::Point32>  ROSNode::returnPointCloud(){
+
+    sensor_msgs::PointCloud out_pointcloud;
+    sensor_msgs::convertPointCloud2ToPointCloud(point_cloud, out_pointcloud);
+    std::vector<geometry_msgs::Point32> temp_;
+
+    for(int i = 0 ; i < out_pointcloud.points.size(); ++i){
+        geometry_msgs::Point32 point;
+
+        //Dooo something here
+        point.x = out_pointcloud.points[i].x;
+        point.y = out_pointcloud.points[i].y;
+        point.z = out_pointcloud.points[i].z;
+
+        temp_.push_back(point);
+        
+    }
+    pcl_points = temp_;
+    return pcl_points;
 }
 
 

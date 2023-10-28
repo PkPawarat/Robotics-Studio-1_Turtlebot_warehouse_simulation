@@ -33,8 +33,11 @@
 Sensor::Sensor() {
     // Initialize ROS environment
     // rosEnv.simulate();
-    ros::NodeHandle nh;
+    // ros::NodeHandle nh;
+    
+    
     // ros::Subscriber sub = nh.subscribe("darknet_ros/bounding_boxes", 1000, &Sensor::boundingBoxCallback, this);
+    // detectShelf(rosNode.returnPointCloud());
 }
 
 // void Sensor::simulateEnvironments(){
@@ -49,7 +52,14 @@ void Sensor::detectObject(sensor_msgs::LaserScan bot_laser_scan) {
     // Add LIDAR object detection logic her
 }
 
-void Sensor::detectShelf(sensor_msgs::PointCloud2 point_cloud){
+void Sensor::detectShelf(std::vector<geometry_msgs::Point32> pcl_points){
+    
+    if (pcl_points.size() > 0){
+        std::cout << "true" << std::endl;
+    }else{
+        std::cout << "false" << std::endl;
+    }
+        // ROS_INFO_STREAM(pcl_points.size());
     
 }
 

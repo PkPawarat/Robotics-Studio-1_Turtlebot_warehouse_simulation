@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "ros/ros.h"
+#include "sensor.h"
 #include <atomic>
 #include <mutex>
 #include <thread>
@@ -81,7 +82,7 @@ public:
      */
     sensor_msgs::Image returnImage();
 
-    sensor_msgs::PointCloud2 returnPointCloud();
+    std::vector<geometry_msgs::Point32> returnPointCloud();
 
 
 
@@ -98,11 +99,6 @@ public:
     void sendCmd(double linear_x, double linear_y, double linear_z, double angular_x, double angular_y, double angular_z);
 
 public:
-    struct Point {
-        float x;
-        float y;
-        float z;
-    };
 
     std::vector<geometry_msgs::Point32> pcl_points;
     ros::NodeHandle nh_;
