@@ -32,9 +32,10 @@ void ROSNode::simulate()
     ROS_INFO_STREAM(bot_odom);
     std::this_thread::sleep_for(std::chrono::seconds(2));
     Sensor sensor;
-    sensor.detectShelf(returnPointCloud());
+    sensor.detectShelf(returnReducedPointCloud());
 
-    ROS_INFO_STREAM(returnPointCloud().size());
+    ROS_INFO_STREAM(returnReducedPointCloud().size());
+    ROS_INFO_STREAM(returnLaserScan().size());
 
     // if (pcl_points.size() > 0){
     //     ROS_INFO_STREAM('true');
@@ -78,9 +79,22 @@ nav_msgs::Odometry ROSNode::returnOdom()
     return bot_odom;
 }
 
-sensor_msgs::LaserScan ROSNode::returnLaserScan()
+std::vector<geometry_msgs::Point> ROSNode::returnLaserScan()
 {
-    return bot_laser_scan;
+    std::vector<geometry_msgs::Point> filteredLaserScan_;
+    temp_scan = bot_laser_scan;
+    for (int i = bot_laser_scan.ranges.size() - 1; i >= 0; i--)
+    {
+        auto &scan = bot_laser_scan.ranges.at(i);
+
+        if ((std::isfinite(scan) && scan != std::numeric_limits<double>::infinity() && scan != std::numeric_limits<double>::quiet_NaN() && scan < bot_laser_scan.range_max))
+        {
+            // delete
+            filteredLaserScan_.push_back(polarToCart(i));
+        }
+    }
+
+    return filteredLaserScan_;
 }
 
 sensor_msgs::Image ROSNode::returnImage()
@@ -107,8 +121,23 @@ std::vector<geometry_msgs::Point32>  ROSNode::returnPointCloud(){
         temp_.push_back(point);
         
     }
-    pcl_points = temp_;
-    return pcl_points;
+    pcl_points = temp_; //Not necessary but keeps a local record
+    return temp_;
+}
+
+std::vector<geometry_msgs::Point32>  ROSNode::returnReducedPointCloud(){
+    std::vector<geometry_msgs::Point32> temp_;
+    temp_ = returnPointCloud();
+
+    std::vector<geometry_msgs::Point32> filtered_temp_;
+
+    for(int i = 0; i < temp_.size(); ++i){
+        float distance_ = calculateDistance(temp_.at(i).x, temp_.at(i).y, temp_.at(i).z);
+        if(distance_ < 1){
+            filtered_temp_.push_back(temp_.at(i));
+        }
+    }
+    return filtered_temp_;
 }
 
 
@@ -123,7 +152,27 @@ void ROSNode::sendCmd(double linear_x, double linear_y, double linear_z, double 
     pub_vel.publish(bot_vel);
 }
 
+geometry_msgs::Point ROSNode::polarToCart(unsigned int index)
+{
+    float angle = temp_scan.angle_min + (temp_scan.angle_increment * index); // + angle_range/2;
+    float range = temp_scan.ranges.at(index);
+    geometry_msgs::Point cart;
 
+    cart.x = static_cast<double>(range * cos(angle));
+    cart.y = static_cast<double>(range * sin(angle));
+
+    // ROS_INFO_STREAM(cart.x);
+    // ROS_INFO_STREAM(cart.y);
+
+    return cart;
+}
+
+float ROSNode::calculateDistance(float x, float y, float z) {
+    float distance = std::sqrt(std::pow(x, 2) +
+                               std::pow(y, 2) +
+                               std::pow(z, 2));
+    return distance;
+}
 // int main(int argc, char **argv) {
 //     ros::init(argc, argv, "object_detection_node");
 //     ros::NodeHandle nh_;

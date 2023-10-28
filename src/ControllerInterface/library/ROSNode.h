@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+
 #include "ros/ros.h"
 #include "sensor.h"
 #include <atomic>
@@ -74,7 +75,7 @@ public:
      * @brief Returns a LaserScan message.
      * @return sensor_msgs::LaserScan A LaserScan message.
      */
-    sensor_msgs::LaserScan returnLaserScan();
+    std::vector<geometry_msgs::Point> returnLaserScan();
 
     /**
      * @brief Returns an Image message.
@@ -83,6 +84,12 @@ public:
     sensor_msgs::Image returnImage();
 
     std::vector<geometry_msgs::Point32> returnPointCloud();
+
+    std::vector<geometry_msgs::Point32>  returnReducedPointCloud();
+
+    float calculateDistance(float x, float y, float z);
+
+    geometry_msgs::Point polarToCart(unsigned int index);
 
 
 
@@ -101,6 +108,7 @@ public:
 public:
 
     std::vector<geometry_msgs::Point32> pcl_points;
+    // std::vector<geometry_msgs::Point> filteredLaserScan_;
     ros::NodeHandle nh_;
 
     ros::Subscriber odom;
@@ -113,6 +121,7 @@ public:
     geometry_msgs::Twist bot_vel;
     nav_msgs::Odometry bot_odom;
     sensor_msgs::LaserScan bot_laser_scan;
+    sensor_msgs::LaserScan temp_scan;
     sensor_msgs::Image image_;
     sensor_msgs::PointCloud2 point_cloud;
 

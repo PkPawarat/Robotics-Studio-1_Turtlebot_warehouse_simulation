@@ -143,7 +143,14 @@ To use the tool, run your gazebo model:
 and then the package:
 
         roslaunch darknet_ros darknet_ros.launch
+
+## ROSNode and sensor class
+The sensor class is included in the ROSNode file and has been coded with the intent that the sensor class is unaware that ROSNode exists. Sensor data is passed through into the sensor class when ROSNode calls functions to process the data. When passing through data, you must use the return functions in ROSNode for example:
+
+        Sensor sensor;
+        sensor.detectShelf(returnPointCloud());
         
+This is necessary as these return functions are programmed to filter readings, erasing redundant data and keeping only the necessary data.
 
 ## NOTICE: when pull this project from git delete Build folder then do this command in terminal (need to do everytime)
 Create Cmake build

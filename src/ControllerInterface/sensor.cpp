@@ -54,11 +54,29 @@ void Sensor::detectObject(sensor_msgs::LaserScan bot_laser_scan) {
 
 void Sensor::detectShelf(std::vector<geometry_msgs::Point32> pcl_points){
     
-    if (pcl_points.size() > 0){
-        std::cout << "true" << std::endl;
-    }else{
-        std::cout << "false" << std::endl;
+    float temp_x = 0;
+    std::cout << pcl_points.size() << std::endl;
+    std::vector<float> z_coords;
+    for(int i = 0; i < pcl_points.size(); ++i){
+        if(pcl_points.at(i).x > 0 && pcl_points.at(i).x < 0.1){
+            z_coords.push_back(pcl_points.at(i).z);
+        }
     }
+    float count = 0;
+    for (int k = 0; k < z_coords.size(); ++k){
+        if(z_coords.at(k) > 0){
+            count++;
+        }
+    }
+    std::cout << count << std::endl;
+    std::cout << z_coords.size() << std::endl;
+    float max_z = z_coords[0];
+    for(int j = 1; j < z_coords.size()-1; ++j){
+        if(z_coords.at(j) > max_z){
+            max_z = z_coords.at(j);
+        }
+    }
+    std::cout << max_z << std::endl;
         // ROS_INFO_STREAM(pcl_points.size());
     
 }
@@ -67,7 +85,7 @@ void Sensor::detectQRCode(sensor_msgs::Image image_) {
     // Camera QR code detection logic
     std::cout << "Detecting QR codes using camera..." << std::endl;
     // Add camera QR code detection logic here
-    ROS_INFO_STREAM(image_);
+    // ROS_INFO_STREAM(image_);
     
 }
 

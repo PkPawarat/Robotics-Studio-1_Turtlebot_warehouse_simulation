@@ -5,6 +5,8 @@
 #include <vector>
 #include <atomic>
 #include <mutex>
+#include <math.h>
+#include <cmath>
 
 #include "visualization_msgs/MarkerArray.h"
 #include "std_srvs/SetBool.h"
