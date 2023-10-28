@@ -153,5 +153,32 @@ You will find the documentation inside doc folder.
 firefox ~/catkin_ws/src/Robotics-Studio-1/doc/html/index.html 
 ```
 
+### Using the Plugin 
 
+## NOTICE: Just pulling the plugin will not work, you need to specifically insert the code into the world file models which you would like to move. You also need to update thier kinematic and potentailly other parameters to allow for the object to move once the plugin is active.
 
+## Compiling the Plugin: 
+
+To compile the plugin, you need to first create a cmake build in the cmakelist file directory.
+
+    rm -rf build
+    mkdir build
+    cd build/
+    cmake ..
+    make
+
+Next you need to open the world file (final_warehouse.world) in a text editor and find the model which you are looking to move. Once you have found the model you are looking for, add the middle line in its parameters.
+
+    <model name = "examplename">
+    ...
+    <plugin name="move_model_plugin" filename="libMoveModelPlugin.so"/>
+    ...
+    </model>
+
+After this, run the world as normal and the model you have chosen should move. If it doesnt, there may be other things in the model parameters such as kinematics restrictions blocking it from moving.
+
+## Edit the Plugin Parameters: 
+
+To Edit the pulgin for changes in direction and velocity, simply open the .cpp file in the ControllerInterface folder and edit the veloctiy vector line. After altering the file, make sure to recreate the cmake build directory.
+
+    this->model->SetLinearVel(ignition::math::Vector3d(.3, 0, 0))
