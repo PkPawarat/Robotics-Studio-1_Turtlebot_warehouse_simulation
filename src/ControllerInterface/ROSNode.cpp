@@ -34,7 +34,7 @@ ROSNode::ROSNode(ros::NodeHandle nh) : nh_(nh){
     // lidarSensor = nh_.subscribe("/sensor", 1000, &ROSNode::lidarCallBack, this);
     // pub_vel = nh_.advertise<std_msgs::Float64>("/cmd_vel", 3, false);
 
-    pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
+    //pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
 }
 
 void ROSNode::simulate()

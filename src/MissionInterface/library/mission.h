@@ -32,14 +32,14 @@
 
 
     /**
-     * @brief Accepts the container of goals.
+     * @brief Accepts the container of goals. This will be picked out from 0- length for the robot to pick
      *
      * @param goals
      */
     void setGoals(std::vector<geometry_msgs::Point> goals);
 
     /**
-     * @brief Accepts the container of goals.
+     * @brief Starts driving to goals one by one
      *
      * @param goals
      */
@@ -54,5 +54,10 @@
      * @brief The stored int to hold the step of the goal that mission is up to. This is set to zero at the class constructor
      */
     int GoalStep; 
+
+      /**
+     * @brief The point where the operator will interact with the robots pod. 
+     */
+    geometry_msgs::Point WorkstationPoint;
  }
  

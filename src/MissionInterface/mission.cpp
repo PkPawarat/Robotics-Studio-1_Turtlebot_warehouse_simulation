@@ -13,10 +13,7 @@ GoalStep = 0;
 ~Mission(){};
 
 
- void setGoals(std::vector<geometry_msgs::Point> goals){
+ void setGoals(geometry_msgs::Point goals){
     Goals = goals;
  }
 
-void GoToNext(){
-    
-}
