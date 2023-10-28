@@ -1,0 +1,8 @@
+prefix=/home/connor/git/Robotics-Studio-1/devel
+
+Name: robotics-studio-1
+Description: Description of robotics-studio-1
+Version: 0.0.1
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

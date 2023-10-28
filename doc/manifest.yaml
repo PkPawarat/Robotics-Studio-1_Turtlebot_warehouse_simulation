@@ -1,0 +1,21 @@
+actions: []
+authors: Pawarat Phatthanaphusakun <Pawarat.phatthanaphusakun-1@student.uts.edu.au>
+brief: ''
+bugtracker: ''
+depends:
+- nav_msgs
+- roslib
+- rosbag
+- catkin
+- sensor_msgs
+- std_msgs
+- roscpp
+- message_runtime
+description: NOthing Here BYE
+license: MIT
+maintainers: Pawarat Phatthanaphusakun <Pawarat.phatthanaphusakun-1@student.uts.edu.au>
+msgs: []
+package_type: package
+repo_url: ''
+srvs: []
+url: ''

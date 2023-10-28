@@ -48,7 +48,8 @@ class Controller : public ControllerInterface {
         virtual void CheckTarget();
         virtual void AssignTarget(const std::string& target);
         virtual void CheckQRCode();
-        virtual void DriveTo(const std::string& location);
+        virtual void DriveTo(geometry_msgs::Point& target);
+        virtual void TurnTo(geometry_msgs::Point& target)
         virtual void PickUpTarget();
         virtual void DropTarget();
 
