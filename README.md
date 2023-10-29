@@ -51,7 +51,10 @@ Instruction how to use Ros, Gazebo, TurtleBot3
 
         ▪ roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
 
-- Mapping ~:RTAB-MAP
+        To capture map with save in  .pgm and .yaml which will be store in catkin folder.
+        - rosrun map_server map_saver
+
+    - Mapping :RTAB-MAP
 
         export TURTLEBOT3_MODEL=waffle
         roslaunch turtlebot3_gazebo
@@ -113,6 +116,45 @@ To create a new branch in a Git repository, you can use the `git branch` command
 Now, you have successfully created a new branch and switched to it. You can start working on your new branch, making changes, and committing them independently of the main branch or any other existing branch. Remember to commit your changes when you're ready, and you can push the new branch to a remote repository using `git push` if needed.
 
 
+
+## Using our world 
+
+        roslaunch turtlebot3_gazebo final_warehouse.launch
+
+
+## Darknet_ros
+
+Darknet_ros is an object detection tool used to identify select ojbects. This package will be used alongside our program to detect unknown obstacles and cease all operations.
+
+To use this, clone the repository in your workspace alongside the Robotics Studio repository.
+
+        git clone --recursive git@github.com:leggedrobotics/darknet_ros.git
+
+To maximise performance, build in release mode:
+
+        catkin_make -DCMAKE_BUILD_TYPE=Release
+
+For users who have NVIDIA graphics cards, see github for more information: https://github.com/leggedrobotics/darknet_ros#installation 
+
+To use the tool, run your gazebo model:
+
+        roslaunch my_custom_world_gazebo large_warehouse.launch 
+
+and then the package:
+
+        roslaunch darknet_ros darknet_ros.launch
+
+## ROSNode and sensor class
+The sensor class is included in the ROSNode file and has been coded with the intent that the sensor class is unaware that ROSNode exists. Sensor data is passed through into the sensor class when ROSNode calls functions to process the data. When passing through data, you must use the return functions in ROSNode for example:
+
+        Sensor sensor;
+        sensor.detectShelf(returnPointCloud());
+        
+This is necessary as these return functions are programmed to filter readings, erasing redundant data and keeping only the necessary data.
+
+The returnPointCloud() function returns a converted version of pointcloud with X, Y and Z values for each point. the returnReducedPointCloud() returns  a point cloud where the points are only within a 1m radius of the robot
+
+
 ## NOTICE: when pull this project from git delete Build folder then do this command in terminal (need to do everytime)
 Create Cmake build
 
@@ -121,3 +163,33 @@ Create Cmake build
     cmake ..
     make
 
+        learn from : https://emanual.robotis.com/docs/en/platform/turtlebot3/nav_simulation/
+
+
+### Documentation
+
+In source documentation is a must, we will examine all code submitted for supporting documentation. You also need the dox file (mainpage.dox) to indicate how the code will run/behave. You need to modiy the mainpage.dox included which does not have any specific documentation.
+
+In ROS, doxygen documentation in generated using the `rosdoc_lite` tool. If you do not have the tool you can install it via `sudo apt-get install ros-noetic-rosdoc-lite` (replace noetic with melodic if on 18.04)
+
+To generate the documentation'
+
+```bash
+cd ~/catkin_ws/src/Robotics-Studio-1
+rosdoc_lite .
+```
+
+You will find the documentation inside doc folder.
+
+```bash
+firefox ~/catkin_ws/src/Robotics-Studio-1/doc/html/index.html 
+```
+
+
+
+Record ros bag 
+        
+        cd ~/catkin_ws/src/Robotics-Studio-1/logs               // record bag in this directory
+        rosbag record -O pointLocation.bag /move_base_simple/goal
+        rosbag info pointLocation.bag                          // check ros bag
+        rosbag info pickupshelf.bag                          // check ros bag
