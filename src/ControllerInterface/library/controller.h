@@ -45,7 +45,7 @@ class Controller : public ControllerInterface {
         std::string currentTarget;
 
     public:
-        Controller(ROSNode& rn);
+        Controller(ROSNode*  rn);
         virtual void SetTargets(std::vector<geometry_msgs::Point>);
         virtual void Execute();
         virtual void CheckTarget();
@@ -53,8 +53,8 @@ class Controller : public ControllerInterface {
         virtual void CheckQRCode();
         
         virtual void DriveTo(geometry_msgs::Point target);
-
         virtual void TurnTo(geometry_msgs::Point target);
+
         virtual void PickUpTarget();
         virtual void DropTarget();
 
@@ -68,16 +68,12 @@ class Controller : public ControllerInterface {
 
 
         virtual double GetRotationTo(geometry_msgs::Point target);
-
+        
+        int CountTargets(); 
 
         
     protected:
-        struct TargetStats {
-            geometry_msgs::Point location; //! location of goal
-            double distance; //! distance to goal
-            double time; //! time to goal
-        };
-        std::vector<TargetStats> Targets;
+        std::vector<geometry_msgs::Point> Targets;
 
         geometry_msgs::PoseStamped Goal;
         ROSNode* ROSNode_; 

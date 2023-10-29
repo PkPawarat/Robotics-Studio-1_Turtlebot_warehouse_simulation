@@ -15,6 +15,7 @@
 
 #include "ControllerInterface/library/pathfinding.h"
 #include "ControllerInterface/library/controllerinterface.h"
+#include "ControllerInterface/library/controller.h"
 #include "ControllerInterface/library/pathfinding.h"
 #include "ControllerInterface/library/ROSNode.h"
 #include "ControllerInterface/library/sensor.h"
@@ -278,7 +279,6 @@ TEST(PathPlanning, FindPathWithROSBagWithMultiGoal) {
 
     bag.close();
 }
-
 
 
 int main(int argc, char **argv) {

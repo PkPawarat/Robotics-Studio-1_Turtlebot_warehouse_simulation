@@ -17,13 +17,13 @@
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
 
-Controller::Controller(ROSNode& rn) : 
+Controller::Controller(ROSNode* rn) : 
     targetDetected(false), 
     qrCodeDetected(false), 
     obstacleDetected(false), 
     batteryLevel(true) 
     {
-        ROSNode_ = &rn;
+        ROSNode_ = rn;
         Targets.clear();
 
         //geometry_msgs::Point goal1{0.5,-0.5}; //The position of one of the pods
@@ -31,31 +31,31 @@ Controller::Controller(ROSNode& rn) :
     }
 
 
+int Controller::CountTargets()
+{
+    return Targets.size();
+}
+
 void Controller::Execute() 
 {
 
     //TODO -> Do some checks here to determine if there is a collision pending
 
-    //TODO -> Work out the waypoints
+    //Waypoints are worked out in the pathfinder functions 
 
-//TEMP waypoints
-std::vector<geometry_msgs::Point> waypoints; 
-//waypoints.push_back({0.5, -2});
-//waypoints.push_back({3.5,-2.5});
+    std::cout << "Waypoint count: " + Targets.size() << std::endl;
 
-    std::cout << "Waypoint count: " + waypoints.size() << std::endl;
-
-    for (unsigned int i = 0; i < waypoints.size(); i++)
+    for (unsigned int i = 0; i < Targets.size(); i++)
     {
-        geometry_msgs::Point newPose = waypoints.at(i);
+        geometry_msgs::Point next = Targets.at(i);
 
-        Controller::TurnTo(newPose);
+        Controller::TurnTo(next);
 
         //check for collision
         
-        std::cout << "Robot turned towards waypoint" << std::endl;
+        std::cout << "Robot turned towards waypoint. Driving function started" << std::endl;
 
-        Controller::DriveTo(newPose);
+        Controller::DriveTo(next);
 
 
         std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -64,11 +64,14 @@ std::vector<geometry_msgs::Point> waypoints;
 
 /// @brief set the target to Targets global variable, only use the location of the tagets.
 /// @param targets 
-void Controller::SetTargets(std::vector<geometry_msgs::Point> targets){
-    Targets.resize(targets.size());
-    for(int i=0; i<targets.size(); i++){
-        Targets[i].location = targets[i];
-    }
+void Controller::SetTargets(std::vector<geometry_msgs::Point> targets)
+{
+    Targets = targets;
+
+    //Targets.resize(targets.size());
+    //for(int i=0; i<targets.size(); i++){
+       // Targets[i].location = targets[i];
+    //}//
 }
 
 void Controller::CheckTarget() {
@@ -92,8 +95,10 @@ void Controller::CheckQRCode() {        // Parameter need to receive a image of 
 
 /// @brief This function will mainly be used for moving the robot to target location using AStar methods from ROS
 /// @param location 
-void Controller::DriveTo(geometry_msgs::Point location) {
+void Controller::DriveTo(geometry_msgs::Point location)
+ {
     std::cout << "Driving to " << location << "..." << std::endl;
+    return;
     // Add driving logic here
     double tolerance_ = 0.2;
 
@@ -128,6 +133,7 @@ void Controller::DriveTo(geometry_msgs::Point location) {
 void Controller::TurnTo(geometry_msgs::Point target) 
 {
     std::cout << "Turning to " << target << "..." << std::endl;
+    return;
     
     //Function helpers
     double angleTolerance = 0.05;

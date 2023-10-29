@@ -41,7 +41,7 @@ class ControllerInterface
     virtual void PickUpTarget() = 0 ;
     virtual void DropTarget() = 0 ;
 
-    virtual void DriveTo(const std::string location) = 0 ;
+    virtual void DriveTo(geometry_msgs::Point target) = 0;
     virtual void TurnTo(geometry_msgs::Point target) = 0;
     virtual double GetRotationTo(geometry_msgs::Point target) = 0;
 
