@@ -6,6 +6,7 @@
                 "limitSymbolsToIncludedHeaders": false
             },
             "includePath": [
+                "${workspaceFolder}/src",
                 "${workspaceFolder}/src/ControllerInterface/library",
                 "${workspaceFolder}/src/MissionInterface/library",
                 "/home/connor/catkin_ws/src/**",

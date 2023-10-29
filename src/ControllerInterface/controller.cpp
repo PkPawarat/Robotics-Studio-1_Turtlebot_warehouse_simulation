@@ -1,4 +1,5 @@
 #include "library/controller.h" 
+#include "library/pathfinding.h" 
 #include "library/ROSNode.h" 
 #include <iostream>
 
@@ -47,17 +48,27 @@ void Controller::Execute()
 
     for (unsigned int i = 0; i < Targets.size(); i++)
     {
-        geometry_msgs::Point next = Targets.at(i);
+        nav_msgs::Odometry start = ROSNode_->bot_odom;
+        geometry_msgs::Point goal = Targets.at(i);
 
-        Controller::TurnTo(next);
+        // Finding the shortest path 
+        Node start_node = _pathPlanning.SetNodeFromOdom(start);
+        Node goal_node = _pathPlanning.SetNodeFromPoint(goal);
+        start_node = _pathPlanning.FindClosestNode(_node, start_node);
+        goal_node = _pathPlanning.FindClosestNode(_node, goal_node);
+        std::vector<Node> path = _pathPlanning.ShortestPath(start_node, goal_node);
 
-        //check for collision
-        
-        std::cout << "Robot turned towards waypoint. Driving function started" << std::endl;
+        for (unsigned int k = 0; k < path.size(); k++) {
+            geometry_msgs::Point steps;
+            steps.x = path.at(k).X;
+            steps.y = path.at(k).Y;
+            Controller::TurnTo(steps);
 
-        Controller::DriveTo(next);
+            //check for collision
+            std::cout << "Robot turned towards waypoint. Driving function started" << std::endl;
 
-
+            Controller::DriveTo(steps);
+        }
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }
@@ -72,6 +83,15 @@ void Controller::SetTargets(std::vector<geometry_msgs::Point> targets)
     //for(int i=0; i<targets.size(); i++){
        // Targets[i].location = targets[i];
     //}//
+}
+
+
+/// @brief set the target to Targets global variable, only use the location of the tagets.
+/// @param targets 
+void Controller::SetPathPlanning(PathPlanning pathPlanning, std::vector<Node> node)
+{
+    _pathPlanning = pathPlanning;
+    _node = node;
 }
 
 void Controller::CheckTarget() {

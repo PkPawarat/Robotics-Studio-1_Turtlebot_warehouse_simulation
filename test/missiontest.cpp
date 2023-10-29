@@ -26,7 +26,7 @@
 
 
 // Test case for finding a path
-TEST(PathPlanning, FindPathWithROSBagWithMultiGoal) {
+TEST(Controller, TestController) {
     int argc = 0; // Initialize argc and argv for ROS
     char** argv = nullptr;
 
@@ -35,18 +35,18 @@ TEST(PathPlanning, FindPathWithROSBagWithMultiGoal) {
     ROSNode rosNode(nh);
 
     Controller* controller_= new Controller(&rosNode);
-
-
-    // Open the ROS bag containing geometry_msgs/PoseStamped messages
-    rosbag::Bag bag;
-    bag.open("/home/connor/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag", rosbag::bagmode::Read);
-
     PathPlanning pathFinder;
 
+    std::string path = ros::package::getPath("Robotics-Studio-1");
+    path += "/test/";
+    std::string file = path + "pointLocation.bag";
+
+    // Open the ROS bag containing geometry_msgs/PoseStamped messages from the point location
+    rosbag::Bag bag;
+    bag.open(file, rosbag::bagmode::Read);
     // Define nodes and edges as needed
     std::vector<Node> nodes;
     // Add nodes and edges here...
-
     // Load data from the ROS bag into pathFinder
     rosbag::View view(bag);
     for (rosbag::MessageInstance const& msg : view) {
@@ -65,86 +65,52 @@ TEST(PathPlanning, FindPathWithROSBagWithMultiGoal) {
     // Add nodes and edges to the path planner
     pathFinder.AutumeticAddingEdge(nodes);
 
-    int count = 0; 
-    int countError = 0; 
-    // Create random device and generator
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distrib(0, nodes.size() - 1);
 
-    while (true){
-
-        // Generate a random start node
-        Node start = nodes[distrib(gen)];
-
-        Node goal;
-        do {
-            // Generate a random goal node
-            goal = nodes[distrib(gen)];
-        } while (goal.X == start.X && goal.Y == start.Y);  // Ensure the goal is not the same as the start
-
-        std::cout << "Start node: (" << start.X << "," << start.Y << ")" << std::endl;
-        std::cout << "Goal node: (" << goal.X << "," << goal.Y << ")" << std::endl;
-
-        // Modify or remove this part if you want to provide start and goal nodes differently
-        // Find the closest nodes to the specified coordinates
-        start = pathFinder.FindClosestNode(nodes, start);
-        goal = pathFinder.FindClosestNode(nodes, goal);
-
-        // Debug output to check closest nodes
-        std::cout << "Closest start node: (" << start.X << "," << start.Y << ")" << std::endl;
-        std::cout << "Closest goal node: (" << goal.X << "," << goal.Y << ")" << std::endl;
-
-        // Find the shortest path
-        std::vector<Node> path = pathFinder.ShortestPath(start, goal);
-
-        // Display the path
-        if (!path.empty()) {
-            std::cout << "Shortest path from (" << start.X << "," << start.Y << ") to (" << goal.X << "," << goal.Y << "):" << std::endl;
-            for (const Node& node : path) {
-                std::cout << "(" << node.X << "," << node.Y << ") ";
-            }
-            std::cout << std::endl;
-            std::cout << "\n";
-            std::cout << "\n";
-
-        } else {
-            std::cout << "No path found from (" << start.X << "," << start.Y << ") to (" << goal.X << "," << goal.Y << ")." << std::endl;
-        }
-        std::cout << "\n";
-        std::cout << "\n";
-        pathFinder.DrawMapWithShortestPath(nodes, path, 0.5);
-        std::cout << "\n";
-        std::cout << "\n";
-
-
-        count ++;
-        if (path.size() == 1) countError ++;
-        if (count == 200)break;
-    }
-
-    // Verify that a path is found
-    // ASSERT_FALSE(path.empty());
-    // EXPECT_EQ(path.front(), start);
-    // EXPECT_EQ(path.back(), goal);
-    std::cout << "Count error: " << countError << std::endl;
-    bag.close();
-
-
+    // For the Shelves locations
+    
     //Turn nodes into targets
     std::vector<geometry_msgs::Point> points;
 
-    for (int i = 0; i < nodes.size(); i++)
-    {
-        geometry_msgs::Point p;
-        p.x = nodes.at(i).X;
-        p.y = nodes.at(i).Y;
+    file = path + "pickupshelf.bag";
 
-        points.push_back(p);
+    // Open the ROS bag containing geometry_msgs/PoseStamped messages from the point location
+    rosbag::Bag bag;
+    bag.open(file, rosbag::bagmode::Read);
+    // Define nodes and edges as needed
+    std::vector<Node> nodes;
+    // Add nodes and edges here...
+    // Load data from the ROS bag into pathFinder
+    rosbag::View view(bag);
+    for (rosbag::MessageInstance const& msg : view) {
+        geometry_msgs::PoseStamped::ConstPtr pose_msg = msg.instantiate<geometry_msgs::PoseStamped>();
+        if (pose_msg != nullptr) {
+            // Extract the X and Y coordinates from the PoseStamped message
+            double x = pose_msg->pose.position.x;
+            double y = pose_msg->pose.position.y;
+
+            geometry_msgs::Point p;
+            p.x = x;
+            p.y = y;
+
+            points.push_back(p);
+
+            Node node = {x, y};
+            nodes.push_back(node);
+        }
     }
+
+    // for (int i = 0; i < nodes.size(); i++)
+    // {
+    //     geometry_msgs::Point p;
+    //     p.x = nodes.at(i).X;
+    //     p.y = nodes.at(i).Y;
+
+    //     points.push_back(p);
+    // }
 
 
     controller_->SetTargets(points);
+    controller_->SetPathPlanning(pathFinder, nodes);
     EXPECT_EQ(controller_->CountTargets(), nodes.size());
 
     controller_->Execute();

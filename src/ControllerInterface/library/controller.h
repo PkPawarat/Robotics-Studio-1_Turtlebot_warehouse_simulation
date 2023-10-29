@@ -4,6 +4,7 @@
 #include "sensor.h"
 #include <string>
 #include "controllerinterface.h"
+#include "pathfinding.h"
 // Keep only the headers needed
 #include <vector>
 #include "ros/ros.h"
@@ -44,6 +45,10 @@ class Controller : public ControllerInterface {
         int battery;
         std::string currentTarget;
 
+        PathPlanning _pathPlanning;
+
+        std::vector<Node> _node;
+
     public:
         Controller(ROSNode*  rn);
         virtual void SetTargets(std::vector<geometry_msgs::Point>);
@@ -70,6 +75,8 @@ class Controller : public ControllerInterface {
         virtual double GetRotationTo(geometry_msgs::Point target);
         
         int CountTargets(); 
+        
+        void SetPathPlanning(PathPlanning pathPlanning, std::vector<Node> node);
 
         
     protected:
