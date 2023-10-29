@@ -6,6 +6,7 @@
 #include <atomic>
 #include <mutex>
 #include <math.h>
+#include <limits>
 #include <cmath>
 
 #include "visualization_msgs/MarkerArray.h"
@@ -43,7 +44,7 @@ public:
     Sensor();
     // void simulateEnvironments();
     void detectObject(sensor_msgs::LaserScan bot_laser_scan);
-    void detectShelf(std::vector<geometry_msgs::Point32> pcl_points);
+    float detectShelf(std::vector<geometry_msgs::Point> laser_scan);
     void detectQRCode(sensor_msgs::Image image_);
 
 public:

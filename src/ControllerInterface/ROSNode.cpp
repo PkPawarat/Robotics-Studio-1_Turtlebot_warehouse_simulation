@@ -32,10 +32,10 @@ void ROSNode::simulate()
     ROS_INFO_STREAM(bot_odom);
     std::this_thread::sleep_for(std::chrono::seconds(2));
     Sensor sensor;
-    sensor.detectShelf(returnReducedPointCloud());
+    sensor.detectShelf(returnLaserScan());
 
-    ROS_INFO_STREAM(returnReducedPointCloud().size());
-    ROS_INFO_STREAM(returnLaserScan().size());
+    // ROS_INFO_STREAM(returnReducedPointCloud().size());
+    // ROS_INFO_STREAM(returnLaserScan().size());
 
     // if (pcl_points.size() > 0){
     //     ROS_INFO_STREAM('true');
@@ -128,13 +128,20 @@ std::vector<geometry_msgs::Point32>  ROSNode::returnPointCloud(){
 std::vector<geometry_msgs::Point32>  ROSNode::returnReducedPointCloud(){
     std::vector<geometry_msgs::Point32> temp_;
     temp_ = returnPointCloud();
-
+ 
     std::vector<geometry_msgs::Point32> filtered_temp_;
-
+ 
+    float anglerange = 15*M_PI/180;
+ 
+ 
     for(int i = 0; i < temp_.size(); ++i){
         float distance_ = calculateDistance(temp_.at(i).x, temp_.at(i).y, temp_.at(i).z);
         if(distance_ < 1){
-            filtered_temp_.push_back(temp_.at(i));
+            float angle = atan2(temp_.at(i).x, temp_.at(i).y);
+ 
+            if(std::abs(angle) < anglerange) {
+                filtered_temp_.push_back(temp_.at(i));
+            }
         }
     }
     return filtered_temp_;
