@@ -10,7 +10,12 @@ ROSNode::ROSNode(ros::NodeHandle nh) : nh_(nh){
     camera_depth = nh_.subscribe("/camera/depth/points", 1, &ROSNode::pointCloudCallBack, this);
     pub_vel = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 3, false);
     pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
+
+    // std::this_thread::sleep_for(std::chrono::seconds(5));
+    // pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
+
     initialPosePublisher = nh_.advertise<geometry_msgs::PoseWithCovarianceStamped>("/initialpose", 1);
+
     thread_ = std::thread(&ROSNode::simulate, this);
     thread_.detach();
     startNode = false;
@@ -43,6 +48,20 @@ void ROSNode::simulate()
     std::cout << "Simulating environment using ROS..." << std::endl;
     // Add ROS simulation logic here
     std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    ROS_INFO_STREAM(bot_odom);
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    Sensor sensor;
+    sensor.detectShelf(returnLaserScan());
+
+    // ROS_INFO_STREAM(returnReducedPointCloud().size());
+    // ROS_INFO_STREAM(returnLaserScan().size());
+
+    // if (pcl_points.size() > 0){
+    //     ROS_INFO_STREAM('true');
+    // }else{
+    //     ROS_INFO_STREAM('false');
+    // }
     // ROS_INFO_STREAM(bot_odom);
     // ROS_INFO_STREAM(point_cloud);
     // ROS_INFO_STREAM(point_cloud.width);
@@ -78,29 +97,6 @@ void ROSNode::pointCloudCallBack(const sensor_msgs::PointCloud2ConstPtr &msg)
 { // Type: sensor_msgs/Image
     robotMtx_.lock();
     point_cloud = *msg;
-
-
-    // pcl::PCLPointCloud2 pcl_cloud;
-    // pcl_conversions::toPCL(point_cloud, pcl_cloud);
-
-    // pcl::PointCloud<pcl::PointXYZ> pcl_xyz_cloud;
-    // pcl::fromPCLPointCloud2(pcl_cloud, pcl_xyz_cloud);
-
-    // std::vector<Point> temp_;
-    // // Now, you can access the points in pcl_xyz_cloud
-    // for (const pcl::PointXYZ& point : pcl_xyz_cloud.points)
-    // {
-    //     Point point_coords;
-        
-    //     point_coords.x = point.x;
-    //     point_coords.y = point.y;
-    //     point_coords.z = point.z;
-
-    //     temp_.push_back(point_coords);
-
-    // }
-
-    // pcl_points = temp_;
     robotMtx_.unlock();
 }
 
@@ -109,9 +105,22 @@ nav_msgs::Odometry ROSNode::returnOdom()
     return bot_odom;
 }
 
-sensor_msgs::LaserScan ROSNode::returnLaserScan()
+std::vector<geometry_msgs::Point> ROSNode::returnLaserScan()
 {
-    return bot_laser_scan;
+    std::vector<geometry_msgs::Point> filteredLaserScan_;
+    temp_scan = bot_laser_scan;
+    for (int i = bot_laser_scan.ranges.size() - 1; i >= 0; i--)
+    {
+        auto &scan = bot_laser_scan.ranges.at(i);
+
+        if ((std::isfinite(scan) && scan != std::numeric_limits<double>::infinity() && scan != std::numeric_limits<double>::quiet_NaN() && scan < bot_laser_scan.range_max))
+        {
+            // delete
+            filteredLaserScan_.push_back(polarToCart(i));
+        }
+    }
+
+    return filteredLaserScan_;
 }
 
 sensor_msgs::Image ROSNode::returnImage()
@@ -120,8 +129,48 @@ sensor_msgs::Image ROSNode::returnImage()
 }
 
 
-sensor_msgs::PointCloud2 ROSNode::returnPointCloud(){
-    return point_cloud;
+
+std::vector<geometry_msgs::Point32>  ROSNode::returnPointCloud(){
+
+    sensor_msgs::PointCloud out_pointcloud;
+    sensor_msgs::convertPointCloud2ToPointCloud(point_cloud, out_pointcloud);
+    std::vector<geometry_msgs::Point32> temp_;
+
+    for(int i = 0 ; i < out_pointcloud.points.size(); ++i){
+        geometry_msgs::Point32 point;
+
+        //Dooo something here
+        point.x = out_pointcloud.points[i].x;
+        point.y = out_pointcloud.points[i].y;
+        point.z = out_pointcloud.points[i].z;
+
+        temp_.push_back(point);
+        
+    }
+    pcl_points = temp_; //Not necessary but keeps a local record
+    return temp_;
+}
+
+std::vector<geometry_msgs::Point32>  ROSNode::returnReducedPointCloud(){
+    std::vector<geometry_msgs::Point32> temp_;
+    temp_ = returnPointCloud();
+ 
+    std::vector<geometry_msgs::Point32> filtered_temp_;
+ 
+    float anglerange = 15*M_PI/180;
+ 
+ 
+    for(int i = 0; i < temp_.size(); ++i){
+        float distance_ = calculateDistance(temp_.at(i).x, temp_.at(i).y, temp_.at(i).z);
+        if(distance_ < 1){
+            float angle = atan2(temp_.at(i).x, temp_.at(i).y);
+ 
+            if(std::abs(angle) < anglerange) {
+                filtered_temp_.push_back(temp_.at(i));
+            }
+        }
+    }
+    return filtered_temp_;
 }
 
 
@@ -136,7 +185,34 @@ void ROSNode::sendCmd(double linear_x, double linear_y, double linear_z, double 
     pub_vel.publish(bot_vel);
 }
 
+geometry_msgs::Point ROSNode::polarToCart(unsigned int index)
+{
+    float angle = temp_scan.angle_min + (temp_scan.angle_increment * index); // + angle_range/2;
+    float range = temp_scan.ranges.at(index);
+    geometry_msgs::Point cart;
 
+    cart.x = static_cast<double>(range * cos(angle));
+    cart.y = static_cast<double>(range * sin(angle));
+
+    // ROS_INFO_STREAM(cart.x);
+    // ROS_INFO_STREAM(cart.y);
+
+    return cart;
+}
+
+float ROSNode::calculateDistance(float x, float y, float z) {
+    float distance = std::sqrt(std::pow(x, 2) +
+                               std::pow(y, 2) +
+                               std::pow(z, 2));
+    return distance;
+}
+// int main(int argc, char **argv) {
+//     ros::init(argc, argv, "object_detection_node");
+//     ros::NodeHandle nh_;
+//     ROSNode rosnode(nh_);
+//     ros::spin();
+//     return 0;
+// }
 void ROSNode::sendGoal(geometry_msgs::Pose position)
 {
     std::string map = "map";

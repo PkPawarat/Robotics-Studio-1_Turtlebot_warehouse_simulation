@@ -30,6 +30,7 @@ int main(int argc, char **argv) {
     ros::NodeHandle nh;
     // Controller controller = Controller();
     ROSNode rosNode(nh);
+    // Sensor sensor;
 
     Controller* controller_= new Controller(&rosNode);
     PathPlanning pathFinder;

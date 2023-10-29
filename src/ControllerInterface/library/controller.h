@@ -36,7 +36,7 @@
 
 class Controller : public ControllerInterface {
     private:
-        Sensor sensor;
+        // Sensor sensor;
         bool targetDetected;
         bool qrCodeDetected;
         bool obstacleDetected;
