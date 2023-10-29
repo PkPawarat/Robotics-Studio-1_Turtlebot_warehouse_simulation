@@ -17,6 +17,9 @@
 #include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/PoseArray.h"
 
+#include "ROSNode.h"
+
+
 /*!
  *  \brief     Controller Class
  *  \details
@@ -42,13 +45,16 @@ class Controller : public ControllerInterface {
         std::string currentTarget;
 
     public:
-        Controller();
+        Controller(ROSNode& rn);
         virtual void SetTargets(std::vector<geometry_msgs::Point>);
         virtual void Execute();
         virtual void CheckTarget();
         virtual void AssignTarget(const std::string& target);
         virtual void CheckQRCode();
-        virtual void DriveTo(const std::string& location);
+        
+        virtual void DriveTo(geometry_msgs::Point target);
+
+        virtual void TurnTo(geometry_msgs::Point target);
         virtual void PickUpTarget();
         virtual void DropTarget();
 
@@ -60,6 +66,10 @@ class Controller : public ControllerInterface {
 
         virtual void RePerentObject();
 
+
+        virtual double GetRotationTo(geometry_msgs::Point target);
+
+
         
     protected:
         struct TargetStats {
@@ -70,7 +80,7 @@ class Controller : public ControllerInterface {
         std::vector<TargetStats> Targets;
 
         geometry_msgs::PoseStamped Goal;
-
+        ROSNode* ROSNode_; 
     };
 
 #endif // CONTROLLER

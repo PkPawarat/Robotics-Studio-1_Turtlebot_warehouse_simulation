@@ -14,6 +14,8 @@
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
 
+#include "ROSNode.h"
+
 /*!
  *  \brief     Controller Interface Class
  *  \details
@@ -36,9 +38,13 @@ class ControllerInterface
     virtual void CheckTarget() = 0 ;
     virtual void AssignTarget(const std::string &target) = 0 ;
     virtual void CheckQRCode() = 0 ;
-    virtual void DriveTo(const std::string &location) = 0 ;
     virtual void PickUpTarget() = 0 ;
     virtual void DropTarget() = 0 ;
+
+    virtual void DriveTo(const std::string location) = 0 ;
+    virtual void TurnTo(geometry_msgs::Point target) = 0;
+    virtual double GetRotationTo(geometry_msgs::Point target) = 0;
+
     
     virtual void CheckObstacle() = 0;
     virtual void CheckBattery() = 0;

@@ -109,7 +109,7 @@ TEST(PathPlanning, FindPathWithROSBag) {
 
     // Open the ROS bag containing geometry_msgs/PoseStamped messages
     rosbag::Bag bag;
-    bag.open("/home/pawarat/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag", rosbag::bagmode::Read);
+    bag.open("/home/connor/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag", rosbag::bagmode::Read);
 
     PathPlanning pathFinder;
 
@@ -185,7 +185,7 @@ TEST(PathPlanning, FindPathWithROSBagWithMultiGoal) {
 
     // Open the ROS bag containing geometry_msgs/PoseStamped messages
     rosbag::Bag bag;
-    bag.open("/home/pawarat/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag", rosbag::bagmode::Read);
+    bag.open("/home/connor/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag", rosbag::bagmode::Read);
 
     PathPlanning pathFinder;
 

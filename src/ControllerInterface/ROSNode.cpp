@@ -16,8 +16,6 @@ ROSNode::ROSNode(ros::NodeHandle nh) : nh_(nh){
     // camera = nh_.subscribe("/camera/rgb/image_raw", 1000, &ROSNode::cameraCallBack, this);
     // lidarSensor = nh_.subscribe("/sensor", 1000, &ROSNode::lidarCallBack, this);
     // pub_vel = nh_.advertise<std_msgs::Float64>("/cmd_vel", 3, false);
-
-    
 }
 
 void ROSNode::simulate()
