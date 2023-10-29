@@ -173,7 +173,7 @@ void PathPlanning::DrawMapWithShortestPath(const std::vector<Node>& locations, c
     
 
     // For logging
-    std::ofstream logFile("/home/pawarat/catkin_ws/src/Robotics-Studio-1/logs/path_log.txt", std::ios::app); // Open in append mode
+    std::ofstream logFile("/home/connor/catkin_ws/src/Robotics-Studio-1/logs/path_log.txt", std::ios::app); // Open in append mode
     
     // Error checking for file opening
     if (!logFile.is_open()) {
@@ -201,4 +201,24 @@ void PathPlanning::DrawMapWithShortestPath(const std::vector<Node>& locations, c
 
     logFile << std::endl; // Add a blank line to separate different paths in the log
     logFile.close(); // Always close the file when done
+}
+
+Node PathPlanning::SetNodeFromPoint(geometry_msgs::Point point){
+    Node node;
+    node.X = point.x;
+    node.Y = point.y;
+    return node;
+}
+Node PathPlanning::SetNodeFromOdom(nav_msgs::Odometry point){
+    Node node;
+    node.X = point.pose.pose.position.x;
+    node.Y = point.pose.pose.position.y;
+    return node;
+}
+
+geometry_msgs::Point PathPlanning::NodeToPoint(Node node){
+    geometry_msgs::Point point;
+    point.x = node.X;
+    point.y = node.Y;
+    return point;
 }

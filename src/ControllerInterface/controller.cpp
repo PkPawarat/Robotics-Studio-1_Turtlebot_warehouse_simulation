@@ -1,4 +1,5 @@
 #include "library/controller.h" 
+#include "library/pathfinding.h" 
 #include "library/ROSNode.h" 
 #include <iostream>
 
@@ -38,28 +39,67 @@ int Controller::CountTargets()
 
 void Controller::Execute() 
 {
-
     //TODO -> Do some checks here to determine if there is a collision pending
 
     //Waypoints are worked out in the pathfinder functions 
 
-    std::cout << "Waypoint count: " + Targets.size() << std::endl;
+    std::cout << "\n Waypoint count: " + Targets.size() << std::endl;
 
+    int a = Targets.size();
     for (unsigned int i = 0; i < Targets.size(); i++)
     {
-        geometry_msgs::Point next = Targets.at(i);
+        nav_msgs::Odometry start = ROSNode_->bot_odom;
+        geometry_msgs::Point goal = Targets.at(i);
 
-        Controller::TurnTo(next);
+        // Finding the shortest path 
+        Node start_node = _pathPlanning.SetNodeFromOdom(start);
+        Node goal_node = _pathPlanning.SetNodeFromPoint(goal);
+        start_node = _pathPlanning.FindClosestNode(_node, start_node);
+        goal_node = _pathPlanning.FindClosestNode(_node, goal_node);
+        std::vector<Node> path = _pathPlanning.ShortestPath(start_node, goal_node);
 
-        //check for collision
-        
-        std::cout << "Robot turned towards waypoint. Driving function started" << std::endl;
+        for (unsigned int k = 0; k < path.size(); k++) {
+             geometry_msgs::Point steps;
+             steps.x = path.at(k).X;
+             steps.y = path.at(k).Y;
+             //Controller::TurnTo(steps);
 
-        Controller::DriveTo(next);
+             //check for collision
+             //std::cout << "Robot turned towards waypoint. Driving function started" << std::endl;
 
+             Controller::DriveTo(steps);
+        }
+
+        Controller::DriveTo(goal);
 
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
+
+    std::cout << "\n Driving complete: " + Targets.size() << std::endl;
+}
+
+void Controller::StartExecute() {
+    std::thread execThread(&Controller::ThreadedExecute, this);
+    execThread.detach(); // Detaching the thread if we don't need to join it later
+}
+
+void Controller::ThreadedExecute() {
+    // Wait until ROSNode_->startNode becomes true
+    unsigned int iterator = 0;
+    while (true) {
+        {
+            std::lock_guard<std::mutex> lock(mtx); // Lock to check the shared variable safely
+            if (ROSNode_->startNode) {
+                break; // Exit the loop if startNode is true
+            }
+        std::cout << "Failed attempt to run Controller::Execute thread. Iterations: " << ++iterator << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Sleep to prevent busy waiting
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Sleep to prevent busy waiting
+    }
+    std::cout << "Execute thread enabled after iterations: " << iterator << std::endl;
+
+    Execute(); // Now startNode is true, proceed with Execute
 }
 
 /// @brief set the target to Targets global variable, only use the location of the tagets.
@@ -72,6 +112,15 @@ void Controller::SetTargets(std::vector<geometry_msgs::Point> targets)
     //for(int i=0; i<targets.size(); i++){
        // Targets[i].location = targets[i];
     //}//
+}
+
+
+/// @brief set the target to Targets global variable, only use the location of the tagets.
+/// @param targets 
+void Controller::SetPathPlanning(PathPlanning pathPlanning, std::vector<Node> node)
+{
+    _pathPlanning = pathPlanning;
+    _node = node;
 }
 
 void Controller::CheckTarget() {
@@ -97,22 +146,27 @@ void Controller::CheckQRCode() {        // Parameter need to receive a image of 
 /// @param location 
 void Controller::DriveTo(geometry_msgs::Point location)
  {
-    std::cout << "Driving to " << location << "..." << std::endl;
-    return;
+    std::cout << "Driving to x:" << location.x << ", y: " << location.y << "..." << std::endl;
+    // return;
     // Add driving logic here
-    double tolerance_ = 0.2;
+    double tolerance_ = 0.4;
+
+
+    nav_msgs::Odometry odom = ROSNode_->returnOdom(); //Gathered from ROSNode
 
     //Turn the location into a pose
 
     geometry_msgs::Pose GoalPose; 
     GoalPose.position = location;
+    GoalPose.orientation = odom.pose.pose.orientation; //Robots current direction facing is the orientation
 
     ROSNode_->sendGoal(GoalPose);
 
     //Hold in this function until the goal is reached
     double hyp = 9999;
-    
-    while (abs(hyp) > tolerance_)
+    int iterator = 0;
+
+    while (true)
     {
         nav_msgs::Odometry odom = ROSNode_->returnOdom(); //Gathered from ROSNode
 
@@ -123,8 +177,15 @@ void Controller::DriveTo(geometry_msgs::Point location)
         double delta_y = location.y - current_y;
 
         double hyp = sqrt(delta_x * delta_x + delta_y * delta_y);
+        
+        // ROSNode_->sendGoal(GoalPose);
+        double i = abs(hyp);
+        if (abs(hyp) <= tolerance_){
+            break;
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::cout << "Waiting to reach to x:" << location.x << ", y: " << location.y << ". Iterator: " << ++iterator << std::endl;
     }
 }
 
@@ -132,11 +193,22 @@ void Controller::DriveTo(geometry_msgs::Point location)
 /// @param location 
 void Controller::TurnTo(geometry_msgs::Point target) 
 {
-    std::cout << "Turning to " << target << "..." << std::endl;
+    std::cout << "Initial rotation not functional: Target " << target << "..." << std::endl;
     return;
+
+    nav_msgs::Odometry odom = ROSNode_->returnOdom(); //Gathered from ROSNode
+
+    //Turn the location into a pose
+
+    geometry_msgs::Pose GoalPose; 
+    GoalPose.position = odom.pose.pose.position;
+    //GoalPose.orientation = odom.pose.pose; //Robots current direction facing is the orientation
+
+    ROSNode_->sendGoal(GoalPose);
+
     
     //Function helpers
-    double angleTolerance = 0.05;
+    double angleTolerance = 0.1;
     double turningSpeed = 0.2; // Set the angular velocity to make the TurtleBot rotate. Adjust the value as needed
 
     //Use another function to calculate the turning required
@@ -152,16 +224,14 @@ void Controller::TurnTo(geometry_msgs::Point target)
     while (abs(delta_yaw) > angleTolerance)
     {
         delta_yaw = Controller::GetRotationTo(target);
-    
+        
         // If rotation is negative, swap direction
-        if (delta_yaw > M_PI * 2) delta_yaw = delta_yaw - M_PI * 2;
+        // if (delta_yaw > M_PI * 2) delta_yaw = delta_yaw - M_PI * 2;
         std::cout << "Rotation remaining: "  << delta_yaw << std::endl;
         
         // Pause briefly to control the loop rate
         std::this_thread::sleep_for(std::chrono::milliseconds(2));
     }
-
-    ROSNode_->sendCmd(0,0,0,0,0,0);
 }
 
 /// @brief Pass in a point on the map. This function will return (in radians) the rotation required to turn to the point.
