@@ -9,17 +9,13 @@ ROSNode::ROSNode(ros::NodeHandle nh) : nh_(nh){
     laser_scan = nh_.subscribe("/scan", 1, &ROSNode::laserScanCallBack, this);
     camera = nh_.subscribe("/camera/rgb/image_raw", 1, &ROSNode::cameraCallBack, this);
     camera_depth = nh_.subscribe("/camera/depth/points", 1, &ROSNode::pointCloudCallBack, this);
-// 
     pub_vel = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 3, false);
     pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
-    // pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
     thread_ = std::thread(&ROSNode::simulate, this);
     thread_.detach();
     // camera = nh_.subscribe("/camera/rgb/image_raw", 1000, &ROSNode::cameraCallBack, this);
     // lidarSensor = nh_.subscribe("/sensor", 1000, &ROSNode::lidarCallBack, this);
     // pub_vel = nh_.advertise<std_msgs::Float64>("/cmd_vel", 3, false);
-
-    
 }
 
 void ROSNode::simulate()
@@ -118,10 +114,10 @@ void ROSNode::sendCmd(double linear_x, double linear_y, double linear_z, double 
 }
 
 
-// int main(int argc, char **argv) {
-//     ros::init(argc, argv, "object_detection_node");
-//     ros::NodeHandle nh_;
-//     ROSNode rosnode(nh_);
-//     ros::spin();
-//     return 0;
-// }
+void ROSNode::sendGoal(geometry_msgs::Pose position)
+{
+    std::string map = "map";
+    bot_goal.header.frame_id = map;  // this need to change according to the rostopic echo /move_base_simple/goal 
+    bot_goal.pose = position;
+    pub_goal.publish(bot_goal);
+}

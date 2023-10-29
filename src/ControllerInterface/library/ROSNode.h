@@ -94,6 +94,8 @@ public:
      */
     void sendCmd(double linear_x, double linear_y, double linear_z, double angular_x, double angular_y, double angular_z);
 
+    void sendGoal(geometry_msgs::Pose position);
+
 public:
     struct Point {
         float x;
@@ -112,6 +114,7 @@ public:
     ros::Publisher pub_vel;
     ros::Publisher pub_goal;
     geometry_msgs::Twist bot_vel;
+    geometry_msgs::PoseStamped bot_goal;
     nav_msgs::Odometry bot_odom;
     sensor_msgs::LaserScan bot_laser_scan;
     sensor_msgs::Image image_;
