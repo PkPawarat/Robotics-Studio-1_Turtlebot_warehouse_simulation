@@ -23,8 +23,11 @@ ROSNode::ROSNode(ros::NodeHandle nh) : nh_(nh){
     
 }
 
+
+
 void ROSNode::simulate()
 {
+    while (ros::ok()) {
     // Simulate the environment using ROS
     std::cout << "Simulating environment using ROS..." << std::endl;
     // Add ROS simulation logic here
@@ -36,6 +39,9 @@ void ROSNode::simulate()
 
     ROS_INFO_STREAM(returnReducedPointCloud().size());
     ROS_INFO_STREAM(returnLaserScan().size());
+    
+    std::cout << "Initializing next loop..." << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(3));
 
     // if (pcl_points.size() > 0){
     //     ROS_INFO_STREAM('true');
@@ -43,6 +49,7 @@ void ROSNode::simulate()
     //     ROS_INFO_STREAM('false');
     // }
     // ROS_INFO_STREAM(point_cloud.width);
+    }
     
 }
 
@@ -125,21 +132,53 @@ std::vector<geometry_msgs::Point32>  ROSNode::returnPointCloud(){
     return temp_;
 }
 
+
 std::vector<geometry_msgs::Point32>  ROSNode::returnReducedPointCloud(){
     std::vector<geometry_msgs::Point32> temp_;
     temp_ = returnPointCloud();
 
     std::vector<geometry_msgs::Point32> filtered_temp_;
 
+    float anglerange = 15*M_PI/180;
+
+
     for(int i = 0; i < temp_.size(); ++i){
         float distance_ = calculateDistance(temp_.at(i).x, temp_.at(i).y, temp_.at(i).z);
-        if(distance_ < 1){
-            filtered_temp_.push_back(temp_.at(i));
+        if(distance_ < 1 ){ //&& temp_.at(i).y > 0
+            float angle = atan2(temp_.at(i).x, temp_.at(i).y);
+
+            if(std::abs(angle) < anglerange) {
+                filtered_temp_.push_back(temp_.at(i));
+            }
+            //filtered_temp_.push_back(temp_.at(i));
         }
     }
     return filtered_temp_;
 }
 
+std::vector<geometry_msgs::Point32> ROSNode::filterRangeBounds() {
+    std::vector<geometry_msgs::Point32> temp_;
+    std::vector<geometry_msgs::Point32> filtered_temp_;
+    temp_ = returnReducedPointCloud();
+
+    //set 15 degree range bounds to keep vision small
+    float anglerange = 15*M_PI/180;
+    
+    //calculate angle of each point relative to robots orientation
+    for (int i = 0; i < temp_.size(); i++ ) {
+        float angle = atan2(temp_.at(i).x, temp_.at(i).y);
+
+        if(std::abs(angle) < anglerange) {
+            filtered_temp_.push_back(temp_.at(i));
+        }
+    }
+
+    return filtered_temp_;
+
+
+
+
+}
 
 void ROSNode::sendCmd(double linear_x, double linear_y, double linear_z, double angular_x, double angular_y, double angular_z)
 {

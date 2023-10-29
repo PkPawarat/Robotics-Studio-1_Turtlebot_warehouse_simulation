@@ -85,7 +85,15 @@ public:
 
     std::vector<geometry_msgs::Point32> returnPointCloud();
 
+
+
+/**
+ * @brief Filters out sensor data beyond 1m. 
+ * @return Filtered Sensor Data
+*/
     std::vector<geometry_msgs::Point32>  returnReducedPointCloud();
+
+    std::vector<geometry_msgs::Point32> filterRangeBounds();
 
     float calculateDistance(float x, float y, float z);
 

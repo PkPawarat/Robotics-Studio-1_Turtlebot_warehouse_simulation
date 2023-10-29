@@ -69,10 +69,10 @@ void Sensor::detectShelf(std::vector<geometry_msgs::Point32> pcl_points){
             // count_2++;
             // std::cout << pcl_points.at(i) << std::endl;
             
-            if(abs(pcl_points.at(i).y) - temp_ < 0.1){
-                std::cout << "shelf 1" << std::endl;
+            if(abs(pcl_points.at(i).y) - temp_ < 1){
+                std::cout << "still shelf" << std::endl;
             }else{
-                std::cout << "shelf 2" << std::endl;
+                std::cout << "next shelf" << std::endl;
             }
             temp_ = pcl_points.at(i).y;
         }
