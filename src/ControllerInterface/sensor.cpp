@@ -53,30 +53,49 @@ void Sensor::detectObject(sensor_msgs::LaserScan bot_laser_scan) {
 }
 
 void Sensor::detectShelf(std::vector<geometry_msgs::Point32> pcl_points){
-    
+    // shelf height is above 0.4 (may need to adjust as i believe it might be higher)
+
     float temp_x = 0;
-    std::cout << pcl_points.size() << std::endl;
+    std::cout << pcl_points.size() << std::endl; // returns size of pcl_cloud
+    std::cout << pcl_points.at(0) << std::endl; // returns first point x,y,z values
+    std::cout << pcl_points.at(pcl_points.size()-1) << std::endl;
     std::vector<float> z_coords;
-    for(int i = 0; i < pcl_points.size(); ++i){
-        if(pcl_points.at(i).x > 0 && pcl_points.at(i).x < 0.1){
-            z_coords.push_back(pcl_points.at(i).z);
-        }
-    }
     float count = 0;
-    for (int k = 0; k < z_coords.size(); ++k){
-        if(z_coords.at(k) > 0){
-            count++;
+    float count_2 = 0;
+    float temp_ = 0;
+    
+    for(int i = 0; i < pcl_points.size(); ++i){     //returns identified shelves STILL WORK IN PROGRESS
+        if(pcl_points.at(i).y > 0 && pcl_points.at(i).z > 0.4){ // may need to adjust z value as the shelf might be higher
+            // count_2++;
+            // std::cout << pcl_points.at(i) << std::endl;
+            
+            if(abs(pcl_points.at(i).y) - temp_ < 0.1){
+                std::cout << "shelf 1" << std::endl;
+            }else{
+                std::cout << "shelf 2" << std::endl;
+            }
+            temp_ = pcl_points.at(i).y;
         }
     }
+    // float count = 0;
+    // for (int k = 0; k < z_coords.size(); ++k){
+    //     if(z_coords.at(k) > 0){
+    //         count++;
+    //     }
+    // }
+    std::cout << count_2 << std::endl;
     std::cout << count << std::endl;
-    std::cout << z_coords.size() << std::endl;
-    float max_z = z_coords[0];
-    for(int j = 1; j < z_coords.size()-1; ++j){
-        if(z_coords.at(j) > max_z){
-            max_z = z_coords.at(j);
-        }
-    }
-    std::cout << max_z << std::endl;
+    // std::cout << z_coords.size() << std::endl;
+    // float max_z = z_coords[0];
+    // for(int j = 1; j < z_coords.size()-1; ++j){
+    //     if(z_coords.at(j) < max_z){
+    //         max_z = z_coords.at(j);
+    //     }
+    //     // std::cout << z_coords.at(j) << std::endl;
+    // }
+
+    // std::cout << z_coords.at(0) << std::endl;
+    // std::cout << max_z << std::endl;
         // ROS_INFO_STREAM(pcl_points.size());
     
 }

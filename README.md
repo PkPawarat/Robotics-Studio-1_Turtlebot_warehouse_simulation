@@ -152,6 +152,9 @@ The sensor class is included in the ROSNode file and has been coded with the int
         
 This is necessary as these return functions are programmed to filter readings, erasing redundant data and keeping only the necessary data.
 
+The returnPointCloud() function returns a converted version of pointcloud with X, Y and Z values for each point. the returnReducedPointCloud() returns  a point cloud where the points are only within a 1m radius of the robot
+
+
 ## NOTICE: when pull this project from git delete Build folder then do this command in terminal (need to do everytime)
 Create Cmake build
 
