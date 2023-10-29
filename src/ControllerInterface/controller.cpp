@@ -69,6 +69,8 @@ void Controller::Execute()
 
             Controller::DriveTo(steps);
         }
+        Controller::DriveTo(goal);
+
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }
