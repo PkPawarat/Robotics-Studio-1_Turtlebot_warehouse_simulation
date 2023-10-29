@@ -91,6 +91,7 @@ public:
 
     geometry_msgs::Point polarToCart(unsigned int index);
 
+    void setUpInitialPose(nav_msgs::Odometry odom);
 
 
 
@@ -105,6 +106,8 @@ public:
      */
     void sendCmd(double linear_x, double linear_y, double linear_z, double angular_x, double angular_y, double angular_z);
 
+    void sendGoal(geometry_msgs::Pose position);
+
 public:
 
     std::vector<geometry_msgs::Point32> pcl_points;
@@ -118,7 +121,9 @@ public:
 
     ros::Publisher pub_vel;
     ros::Publisher pub_goal;
+    ros::Publisher initialPosePublisher;
     geometry_msgs::Twist bot_vel;
+    geometry_msgs::PoseStamped bot_goal;
     nav_msgs::Odometry bot_odom;
     sensor_msgs::LaserScan bot_laser_scan;
     sensor_msgs::LaserScan temp_scan;
@@ -128,6 +133,8 @@ public:
     std::mutex robotMtx_;
 
     std::thread thread_;
+
+    bool startNode;
     // std::mutex laserScanMtx_;
 };
 

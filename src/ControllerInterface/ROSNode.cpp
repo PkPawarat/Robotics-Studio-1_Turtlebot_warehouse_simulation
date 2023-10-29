@@ -2,33 +2,53 @@
 #include "library/ROSNode.h"
 // Keep only the headers needed
 #include "ros/ros.h"
-
-
+#include <geometry_msgs/PoseWithCovarianceStamped.h>    
 ROSNode::ROSNode(ros::NodeHandle nh) : nh_(nh){
     odom = nh_.subscribe("/odom", 1, &ROSNode::odomCallBack, this);
     laser_scan = nh_.subscribe("/scan", 1, &ROSNode::laserScanCallBack, this);
     camera = nh_.subscribe("/camera/rgb/image_raw", 1, &ROSNode::cameraCallBack, this);
     camera_depth = nh_.subscribe("/camera/depth/points", 1, &ROSNode::pointCloudCallBack, this);
-// 
     pub_vel = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 3, false);
     pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
+
     // std::this_thread::sleep_for(std::chrono::seconds(5));
     // pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
+
+    initialPosePublisher = nh_.advertise<geometry_msgs::PoseWithCovarianceStamped>("/initialpose", 1);
+
     thread_ = std::thread(&ROSNode::simulate, this);
     thread_.detach();
+    startNode = false;
+
     // camera = nh_.subscribe("/camera/rgb/image_raw", 1000, &ROSNode::cameraCallBack, this);
     // lidarSensor = nh_.subscribe("/sensor", 1000, &ROSNode::lidarCallBack, this);
     // pub_vel = nh_.advertise<std_msgs::Float64>("/cmd_vel", 3, false);
-
-    
 }
+void ROSNode::setUpInitialPose(nav_msgs::Odometry odom){
+    geometry_msgs::PoseWithCovarianceStamped initialPose;
+    // Set the frame_id and timestamp. 
+    // Ensure that the frame_id matches your robot's configuration.
+    initialPose.header.frame_id = "map";
+    initialPose.header.stamp = ros::Time::now();
 
+    // Set the pose data. You may want to adjust or convert these based on your needs.
+    initialPose.pose.pose.position.x = odom.pose.pose.position.x;
+    initialPose.pose.pose.position.y = odom.pose.pose.position.y;
+    initialPose.pose.pose.orientation = odom.pose.pose.orientation;
+
+    // Set covariance if needed, here copied directly from Odometry
+    initialPose.pose.covariance = odom.pose.covariance;
+
+    // Publish the initial pose
+    initialPosePublisher.publish(initialPose);
+}
 void ROSNode::simulate()
 {
     // Simulate the environment using ROS
     std::cout << "Simulating environment using ROS..." << std::endl;
     // Add ROS simulation logic here
     std::this_thread::sleep_for(std::chrono::seconds(2));
+
     ROS_INFO_STREAM(bot_odom);
     std::this_thread::sleep_for(std::chrono::seconds(2));
     Sensor sensor;
@@ -42,6 +62,8 @@ void ROSNode::simulate()
     // }else{
     //     ROS_INFO_STREAM('false');
     // }
+    // ROS_INFO_STREAM(bot_odom);
+    // ROS_INFO_STREAM(point_cloud);
     // ROS_INFO_STREAM(point_cloud.width);
     
 }
@@ -50,6 +72,10 @@ void ROSNode::odomCallBack(const nav_msgs::OdometryConstPtr &msg)
 {
     robotMtx_.lock();
     bot_odom = *msg;
+    if (!startNode) {
+        startNode = true;
+        setUpInitialPose(bot_odom);
+    }
     robotMtx_.unlock();
 }
 
@@ -187,3 +213,12 @@ float ROSNode::calculateDistance(float x, float y, float z) {
 //     ros::spin();
 //     return 0;
 // }
+void ROSNode::sendGoal(geometry_msgs::Pose position)
+{
+    std::string map = "map";
+    bot_goal.header.seq++;
+    bot_goal.header.frame_id = map;  // this need to change according to the rostopic echo /move_base_simple/goal 
+    bot_goal.pose = position;
+    bot_goal.pose.orientation.w = 0.5;
+    pub_goal.publish(bot_goal);
+}
