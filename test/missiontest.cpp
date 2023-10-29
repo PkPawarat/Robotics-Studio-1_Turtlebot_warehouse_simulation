@@ -25,23 +25,23 @@
 
 // Test case for finding a path
 TEST(PathPlanning, FindPathWithROSBagWithMultiGoal) {
-    // int argc = 0; // Initialize argc and argv for ROS
-    // char** argv = nullptr;
-    // // ros::init(argc, argv, "your_node_name");
-    // // ros::NodeHandle nh;
+    int argc = 0; // Initialize argc and argv for ROS
+    char** argv = nullptr;
+    ros::init(argc, argv, "your_node_name");
+    ros::NodeHandle nh;
 
     // // Open the ROS bag containing geometry_msgs/PoseStamped messages
-    // rosbag::Bag bag;
-    // bag.open("/home/pawarat/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag", rosbag::bagmode::Read);
+    rosbag::Bag bag;
+    bag.open("/home/connor/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag", rosbag::bagmode::Read);
 
-    // PathPlanning pathFinder;
+    PathPlanning pathFinder;
 
     // // Define nodes and edges as needed
-    // std::vector<Node> nodes;
+    std::vector<Node> nodes;
     // // Add nodes and edges here...
 
     // // Load data from the ROS bag into pathFinder
-    // rosbag::View view(bag);
+    rosbag::View view(bag);
     // for (rosbag::MessageInstance const& msg : view) {
     //     geometry_msgs::PoseStamped::ConstPtr pose_msg = msg.instantiate<geometry_msgs::PoseStamped>();
     //     if (pose_msg != nullptr) {
