@@ -74,14 +74,14 @@ TEST(Controller, TestController) {
     file = path + "pickupshelf.bag";
 
     // Open the ROS bag containing geometry_msgs/PoseStamped messages from the point location
-    rosbag::Bag bag;
-    bag.open(file, rosbag::bagmode::Read);
+    rosbag::Bag bag2;
+    bag2.open(file, rosbag::bagmode::Read);
     // Define nodes and edges as needed
-    std::vector<Node> nodes;
+    std::vector<Node> nodes2;
     // Add nodes and edges here...
     // Load data from the ROS bag into pathFinder
-    rosbag::View view(bag);
-    for (rosbag::MessageInstance const& msg : view) {
+    rosbag::View view2(bag2);
+    for (rosbag::MessageInstance const& msg : view2) {
         geometry_msgs::PoseStamped::ConstPtr pose_msg = msg.instantiate<geometry_msgs::PoseStamped>();
         if (pose_msg != nullptr) {
             // Extract the X and Y coordinates from the PoseStamped message
@@ -95,19 +95,9 @@ TEST(Controller, TestController) {
             points.push_back(p);
 
             Node node = {x, y};
-            nodes.push_back(node);
+            nodes2.push_back(node);
         }
     }
-
-    // for (int i = 0; i < nodes.size(); i++)
-    // {
-    //     geometry_msgs::Point p;
-    //     p.x = nodes.at(i).X;
-    //     p.y = nodes.at(i).Y;
-
-    //     points.push_back(p);
-    // }
-
 
     controller_->SetTargets(points);
     controller_->SetPathPlanning(pathFinder, nodes);

@@ -77,6 +77,13 @@ class Controller : public ControllerInterface {
         int CountTargets(); 
         
         void SetPathPlanning(PathPlanning pathPlanning, std::vector<Node> node);
+        
+        std::mutex mtx;
+        void ThreadedExecute();
+
+        void StartExecute();
+
+
 
         
     protected:

@@ -39,7 +39,6 @@ int Controller::CountTargets()
 
 void Controller::Execute() 
 {
-
     //TODO -> Do some checks here to determine if there is a collision pending
 
     //Waypoints are worked out in the pathfinder functions 
@@ -58,21 +57,41 @@ void Controller::Execute()
         goal_node = _pathPlanning.FindClosestNode(_node, goal_node);
         std::vector<Node> path = _pathPlanning.ShortestPath(start_node, goal_node);
 
-        for (unsigned int k = 0; k < path.size(); k++) {
-            geometry_msgs::Point steps;
-            steps.x = path.at(k).X;
-            steps.y = path.at(k).Y;
-            Controller::TurnTo(steps);
+        // for (unsigned int k = 0; k < path.size(); k++) {
+        //     geometry_msgs::Point steps;
+        //     steps.x = path.at(k).X;
+        //     steps.y = path.at(k).Y;
+        //     // Controller::TurnTo(steps);
 
-            //check for collision
-            std::cout << "Robot turned towards waypoint. Driving function started" << std::endl;
+        //     //check for collision
+        //     std::cout << "Robot turned towards waypoint. Driving function started" << std::endl;
 
-            Controller::DriveTo(steps);
-        }
+        //     Controller::DriveTo(steps);
+        // }
         Controller::DriveTo(goal);
 
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
+}
+
+void Controller::StartExecute() {
+    std::thread execThread(&Controller::ThreadedExecute, this);
+    execThread.detach(); // Detaching the thread if we don't need to join it later
+}
+
+void Controller::ThreadedExecute() {
+    // Wait until ROSNode_->startNode becomes true
+    while (true) {
+        {
+            std::lock_guard<std::mutex> lock(mtx); // Lock to check the shared variable safely
+            if (ROSNode_->startNode) {
+                break; // Exit the loop if startNode is true
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Sleep to prevent busy waiting
+    }
+
+    Execute(); // Now startNode is true, proceed with Execute
 }
 
 /// @brief set the target to Targets global variable, only use the location of the tagets.
@@ -120,9 +139,9 @@ void Controller::CheckQRCode() {        // Parameter need to receive a image of 
 void Controller::DriveTo(geometry_msgs::Point location)
  {
     std::cout << "Driving to " << location << "..." << std::endl;
-    return;
+    // return;
     // Add driving logic here
-    double tolerance_ = 0.2;
+    double tolerance_ = 0.4;
 
     //Turn the location into a pose
 
@@ -134,7 +153,7 @@ void Controller::DriveTo(geometry_msgs::Point location)
     //Hold in this function until the goal is reached
     double hyp = 9999;
     
-    while (abs(hyp) > tolerance_)
+    while (true)
     {
         nav_msgs::Odometry odom = ROSNode_->returnOdom(); //Gathered from ROSNode
 
@@ -145,8 +164,13 @@ void Controller::DriveTo(geometry_msgs::Point location)
         double delta_y = location.y - current_y;
 
         double hyp = sqrt(delta_x * delta_x + delta_y * delta_y);
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        
+        // ROSNode_->sendGoal(GoalPose);
+        double i = abs(hyp);
+        if (abs(hyp) <= tolerance_){
+            break;
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(5));
     }
 }
 
@@ -155,7 +179,7 @@ void Controller::DriveTo(geometry_msgs::Point location)
 void Controller::TurnTo(geometry_msgs::Point target) 
 {
     std::cout << "Turning to " << target << "..." << std::endl;
-    return;
+    // return;
     
     //Function helpers
     double angleTolerance = 0.05;
@@ -174,12 +198,14 @@ void Controller::TurnTo(geometry_msgs::Point target)
     while (abs(delta_yaw) > angleTolerance)
     {
         delta_yaw = Controller::GetRotationTo(target);
-    
+        
         // If rotation is negative, swap direction
-        if (delta_yaw > M_PI * 2) delta_yaw = delta_yaw - M_PI * 2;
+        // if (delta_yaw > M_PI * 2) delta_yaw = delta_yaw - M_PI * 2;
         std::cout << "Rotation remaining: "  << delta_yaw << std::endl;
         
         // Pause briefly to control the loop rate
+
+        ROSNode_->sendCmd(0,0,0,0,0,turningSpeed);
         std::this_thread::sleep_for(std::chrono::milliseconds(2));
     }
 

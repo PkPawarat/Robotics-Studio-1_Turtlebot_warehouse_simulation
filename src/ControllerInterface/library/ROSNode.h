@@ -80,6 +80,7 @@ public:
 
     sensor_msgs::PointCloud2 returnPointCloud();
 
+    void setUpInitialPose(nav_msgs::Odometry odom);
 
 
 
@@ -113,6 +114,7 @@ public:
 
     ros::Publisher pub_vel;
     ros::Publisher pub_goal;
+    ros::Publisher initialPosePublisher;
     geometry_msgs::Twist bot_vel;
     geometry_msgs::PoseStamped bot_goal;
     nav_msgs::Odometry bot_odom;
@@ -123,6 +125,8 @@ public:
     std::mutex robotMtx_;
 
     std::thread thread_;
+
+    bool startNode;
     // std::mutex laserScanMtx_;
 };
 
