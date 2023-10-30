@@ -58,6 +58,7 @@ void Controller::Execute()
         goal_node = _pathPlanning.FindClosestNode(_node, goal_node);
         std::vector<Node> path = _pathPlanning.ShortestPath(start_node, goal_node);
 
+        //Drive to each of the waypoints
         for (unsigned int k = 0; k < path.size(); k++) {
              geometry_msgs::Point steps;
              steps.x = path.at(k).X;
@@ -70,9 +71,13 @@ void Controller::Execute()
              Controller::DriveTo(steps);
         }
 
+        //Drive to the final point to the goal
         Controller::DriveTo(goal);
 
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::cout << "\n Robot reached target. Holding in place to pick up / drop off (emulate): " << std::endl;
+
+        //Stop the robot for a few seconds in place
+        std::this_thread::sleep_for(std::chrono::seconds(10));
     }
 
     std::cout << "\n Driving complete: " + Targets.size() << std::endl;
@@ -184,7 +189,6 @@ void Controller::DriveTo(geometry_msgs::Point location)
             break;
         }
         std::this_thread::sleep_for(std::chrono::seconds(1));
-
         std::cout << "Waiting to reach to x:" << location.x << ", y: " << location.y << ". Iterator: " << ++iterator << std::endl;
     }
 }
