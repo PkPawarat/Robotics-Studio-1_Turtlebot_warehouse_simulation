@@ -1,10 +1,10 @@
 {
     "python.autoComplete.extraPaths": [
-        "/home/pk/catkin_ws/devel/lib/python3/dist-packages",
+        "/home/connor/catkin_ws/devel/lib/python3/dist-packages",
         "/opt/ros/noetic/lib/python3/dist-packages"
     ],
     "python.analysis.extraPaths": [
-        "/home/pk/catkin_ws/devel/lib/python3/dist-packages",
+        "/home/connor/catkin_ws/devel/lib/python3/dist-packages",
         "/opt/ros/noetic/lib/python3/dist-packages"
     ],
     "files.associations": {
@@ -75,6 +75,16 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "csignal": "cpp",
-        "any": "cpp"
+        "any": "cpp",
+        "regex": "cpp",
+        "*.ipp": "cpp",
+        "csetjmp": "cpp",
+        "charconv": "cpp",
+        "codecvt": "cpp",
+        "cuchar": "cpp",
+        "forward_list": "cpp",
+        "future": "cpp",
+        "scoped_allocator": "cpp",
+        "valarray": "cpp"
     }
 }

@@ -72,11 +72,20 @@ target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}
 ## Testing ##
 #############
 # ## Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}_test test/utest.cpp )
+catkin_add_gtest(${PROJECT_NAME}_test test/TestPathPlanning.cpp )
 if(TARGET ${PROJECT_NAME}_test)
-   target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor )
-   target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding )
-   target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_controller )
-  target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_ROSNode)
+target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor )
+target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding )
+target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_controller )
+target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_ROSNode)
 message ( STATUS " catkin_LIBRARIES ${catkin_LIBRARIES}")
+endif()
+
+catkin_add_gtest(${PROJECT_NAME}_testmission test/missiontest.cpp )
+if(TARGET ${PROJECT_NAME}_testmission)
+  target_link_libraries(${PROJECT_NAME}_testmission ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor )
+  target_link_libraries(${PROJECT_NAME}_testmission ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding )
+  target_link_libraries(${PROJECT_NAME}_testmission ${catkin_LIBRARIES} ${PROJECT_NAME}_controller )
+  target_link_libraries(${PROJECT_NAME}_testmission ${catkin_LIBRARIES} ${PROJECT_NAME}_ROSNode)
+  message ( STATUS " catkin_LIBRARIES ${catkin_LIBRARIES}")
 endif()

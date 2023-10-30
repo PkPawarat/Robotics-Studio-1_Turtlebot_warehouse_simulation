@@ -1,18 +1,6 @@
-
-#include <iostream>
+#include <gtest/gtest.h>
+#include <climits>
 #include <vector>
-#include "ControllerInterface/library/controller.h"
-#include "ControllerInterface/library/controllerinterface.h"
-#include "ControllerInterface/library/pathfinding.h"
-#include "ControllerInterface/library/ROSNode.h"
-#include "ControllerInterface/library/sensor.h"
-#include "MissionInterface/library/missionInterface.h"
-#include "MissionInterface/library/mission.h"
-
-#include "ros/ros.h"
-#include <thread>
-#include <nav_msgs/Odometry.h>
-#include <geometry_msgs/PoseWithCovarianceStamped.h>
 
 #include <ros/package.h> //This tool allows to identify the path of the package on your system
 #include <rosbag/bag.h>
@@ -22,15 +10,29 @@
 #include <sensor_msgs/LaserScan.h>
 #include <nav_msgs/Odometry.h>
 #include "tf/transform_datatypes.h" //To use getYaw function from the quaternion of orientation
+
+#include <gtest/gtest.h>
+
+#include "ControllerInterface/library/pathfinding.h"
+#include "ControllerInterface/library/controllerinterface.h"
+#include "ControllerInterface/library/controller.h"
+#include "ControllerInterface/library/pathfinding.h"
+#include "ControllerInterface/library/ROSNode.h"
+#include "ControllerInterface/library/sensor.h"
+#include "MissionInterface/library/missionInterface.h"
+#include "MissionInterface/library/mission.h"
+
 #include <random>
 
 
-int main(int argc, char **argv) {
-    ros::init(argc, argv, "my_robot_node");
+// Test case for finding a path
+TEST(Controller, TestController) {
+    int argc = 0; // Initialize argc and argv for ROS
+    char** argv = nullptr;
+
+    ros::init(argc, argv, "Test node");
     ros::NodeHandle nh;
-    // Controller controller = Controller();
     ROSNode rosNode(nh);
-    // Sensor sensor;
 
     Controller* controller_= new Controller(&rosNode);
     PathPlanning pathFinder;
@@ -38,7 +40,7 @@ int main(int argc, char **argv) {
     std::string path = ros::package::getPath("Robotics-Studio-1");
     path += "/test/";
     std::string file = path + "pointLocation.bag";
-    file = "/home/pk/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag";
+
     // Open the ROS bag containing geometry_msgs/PoseStamped messages from the point location
     rosbag::Bag bag;
     bag.open(file, rosbag::bagmode::Read);
@@ -70,7 +72,6 @@ int main(int argc, char **argv) {
     std::vector<geometry_msgs::Point> points;
 
     file = path + "pickupshelf.bag";
-    file = "/home/pk/catkin_ws/src/Robotics-Studio-1/logs/pickupshelf.bag";
 
     // Open the ROS bag containing geometry_msgs/PoseStamped messages from the point location
     rosbag::Bag bag2;
@@ -100,30 +101,16 @@ int main(int argc, char **argv) {
 
     controller_->SetTargets(points);
     controller_->SetPathPlanning(pathFinder, nodes);
-    // Create a thread to run the Execute function
-    std::thread execute_thread(&Controller::ThreadedExecute, controller_);
-    // controller_->Execute();
+    EXPECT_EQ(controller_->CountTargets(), nodes.size());
+
+    controller_->Execute();
     
 
-    //Let's slow down this loop to 200ms (5Hz)
-    // std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    
-    ros::spin();
-    ros::shutdown();
-    execute_thread.join();
-    // t.join();
-    return 0;
 }
 
-// Test initial pose 
-// int main(int argc, char** argv) {
-//     // ros::init(argc, argv, "");
-//     // ros::NodeHandle nh;
-//     // // Create a publisher for the /initialpose topic
-//     // // odom = nh.subscribe("/odom", 1, &odomCallback);
-//     // // initialPosePublisher = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/initialpose", 1);
-//     // // Spin to process incoming messages
-//     // ros::spin();
-//     // ros::shutdown();
-//     return 0;
-// }
+
+
+int main(int argc, char **argv) {
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

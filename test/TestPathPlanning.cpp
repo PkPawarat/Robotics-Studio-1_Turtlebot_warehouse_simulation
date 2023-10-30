@@ -15,6 +15,7 @@
 
 #include "ControllerInterface/library/pathfinding.h"
 #include "ControllerInterface/library/controllerinterface.h"
+#include "ControllerInterface/library/controller.h"
 #include "ControllerInterface/library/pathfinding.h"
 #include "ControllerInterface/library/ROSNode.h"
 #include "ControllerInterface/library/sensor.h"
@@ -109,7 +110,7 @@ TEST(PathPlanning, FindPathWithROSBag) {
 
     // Open the ROS bag containing geometry_msgs/PoseStamped messages
     rosbag::Bag bag;
-    bag.open("/home/pawarat/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag", rosbag::bagmode::Read);
+    bag.open("/home/connor/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag", rosbag::bagmode::Read);
 
     PathPlanning pathFinder;
 
@@ -185,7 +186,7 @@ TEST(PathPlanning, FindPathWithROSBagWithMultiGoal) {
 
     // Open the ROS bag containing geometry_msgs/PoseStamped messages
     rosbag::Bag bag;
-    bag.open("/home/pawarat/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag", rosbag::bagmode::Read);
+    bag.open("/home/connor/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag", rosbag::bagmode::Read);
 
     PathPlanning pathFinder;
 
@@ -278,7 +279,6 @@ TEST(PathPlanning, FindPathWithROSBagWithMultiGoal) {
 
     bag.close();
 }
-
 
 
 int main(int argc, char **argv) {

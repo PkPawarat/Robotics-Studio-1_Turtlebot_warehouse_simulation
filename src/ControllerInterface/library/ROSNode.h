@@ -91,7 +91,12 @@ public:
 
     geometry_msgs::Point polarToCart(unsigned int index);
 
+<<<<<<< HEAD
     void setShelfDetectingFLag(bool flag);
+=======
+    void setUpInitialPose(nav_msgs::Odometry odom);
+
+>>>>>>> c1d8170cc53dbc32341c669c652c1a1360d7738b
 
 
     /**
@@ -104,6 +109,8 @@ public:
      * @param angular_z The angular velocity in the z-axis.
      */
     void sendCmd(double linear_x, double linear_y, double linear_z, double angular_x, double angular_y, double angular_z);
+
+    void sendGoal(geometry_msgs::Pose position);
 
 public:
 
@@ -118,7 +125,9 @@ public:
 
     ros::Publisher pub_vel;
     ros::Publisher pub_goal;
+    ros::Publisher initialPosePublisher;
     geometry_msgs::Twist bot_vel;
+    geometry_msgs::PoseStamped bot_goal;
     nav_msgs::Odometry bot_odom;
     sensor_msgs::LaserScan bot_laser_scan;
     sensor_msgs::LaserScan temp_scan;
@@ -130,6 +139,8 @@ public:
     std::mutex robotMtx_;
 
     std::thread thread_;
+
+    bool startNode;
     // std::mutex laserScanMtx_;
 };
 

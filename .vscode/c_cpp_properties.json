@@ -6,12 +6,13 @@
                 "limitSymbolsToIncludedHeaders": false
             },
             "includePath": [
+                "${workspaceFolder}/src",
                 "${workspaceFolder}/src/ControllerInterface/library",
                 "${workspaceFolder}/src/MissionInterface/library",
-                "/home/pawarat/catkin_ws/src/**",
-                "/home/pawarat/catkin_ws/src/Robotics-Studio-1/**",
-                "/home/pawarat/catkin_ws/src/Robotics-Studio-1/src/ControllerInterface/library/**",
-                "/home/pawarat/catkin_ws/src/Robotics-Studio-1/src/MissionInterface/library/**",
+                "/home/connor/catkin_ws/src/**",
+                "/home/connor/catkin_ws/src/Robotics-Studio-1/**",
+                "/home/connor/catkin_ws/src/Robotics-Studio-1/src/ControllerInterface/library/**",
+                "/home/connor/catkin_ws/src/Robotics-Studio-1/src/MissionInterface/library/**",
                 "/opt/ros/noetic/include/**",
                 "/usr/include/**"
             ],
