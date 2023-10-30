@@ -91,7 +91,7 @@ public:
 
     geometry_msgs::Point polarToCart(unsigned int index);
 
-
+    void setShelfDetectingFLag(bool flag);
 
 
     /**
@@ -124,6 +124,8 @@ public:
     sensor_msgs::LaserScan temp_scan;
     sensor_msgs::Image image_;
     sensor_msgs::PointCloud2 point_cloud;
+    
+    bool shelf_locating_flag;
 
     std::mutex robotMtx_;
 

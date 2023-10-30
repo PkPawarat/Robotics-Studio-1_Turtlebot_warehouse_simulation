@@ -31,8 +31,12 @@ void ROSNode::simulate()
     std::this_thread::sleep_for(std::chrono::seconds(2));
     ROS_INFO_STREAM(bot_odom);
     std::this_thread::sleep_for(std::chrono::seconds(2));
+    
     Sensor sensor;
-    sensor.detectShelf(returnLaserScan());
+    while(shelf_locating_flag == true){
+        float y_value = sensor.detectShelf(returnLaserScan());
+        std::cout << "Centre of the road is " << y_value << "away fom the robot" << std::endl;
+    }
 
     // ROS_INFO_STREAM(returnReducedPointCloud().size());
     // ROS_INFO_STREAM(returnLaserScan().size());
@@ -172,6 +176,10 @@ geometry_msgs::Point ROSNode::polarToCart(unsigned int index)
     // ROS_INFO_STREAM(cart.y);
 
     return cart;
+}
+
+void ROSNode::setShelfDetectingFlag(bool flag){
+    shelf_locating_flag = flag;
 }
 
 float ROSNode::calculateDistance(float x, float y, float z) {
