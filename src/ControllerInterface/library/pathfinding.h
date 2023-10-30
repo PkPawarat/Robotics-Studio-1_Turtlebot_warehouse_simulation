@@ -22,6 +22,8 @@
 #include <queue>
 #include <set>
 #include <limits>
+#include "geometry_msgs/PoseArray.h"
+#include "nav_msgs/Odometry.h"
 
 using namespace std;
 
@@ -53,6 +55,11 @@ public:
     Node FindClosestNode(const std::vector<Node>& nodes, const Node& target);
     void DrawMap(const std::vector<Node>& locations, double precision);
     void DrawMapWithShortestPath(const std::vector<Node>& locations, const std::vector<Node>& shortestPath, double precision) ;
+    Node SetNodeFromPoint(geometry_msgs::Point point);
+    Node SetNodeFromOdom(nav_msgs::Odometry point);
+
+    geometry_msgs::Point NodeToPoint(Node node);
+    
 };
 
 #endif // PATHFINDING_H

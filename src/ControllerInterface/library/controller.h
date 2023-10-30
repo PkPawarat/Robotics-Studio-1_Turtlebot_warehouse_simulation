@@ -4,6 +4,7 @@
 #include "sensor.h"
 #include <string>
 #include "controllerinterface.h"
+#include "pathfinding.h"
 // Keep only the headers needed
 #include <vector>
 #include "ros/ros.h"
@@ -16,6 +17,9 @@
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/PoseArray.h"
+
+#include "ROSNode.h"
+
 
 /*!
  *  \brief     Controller Class
@@ -41,14 +45,21 @@ class Controller : public ControllerInterface {
         int battery;
         std::string currentTarget;
 
+        PathPlanning _pathPlanning;
+
+        std::vector<Node> _node;
+
     public:
-        Controller();
+        Controller(ROSNode*  rn);
         virtual void SetTargets(std::vector<geometry_msgs::Point>);
         virtual void Execute();
         virtual void CheckTarget();
         virtual void AssignTarget(const std::string& target);
         virtual void CheckQRCode();
-        virtual void DriveTo(const std::string& location);
+        
+        virtual void DriveTo(geometry_msgs::Point target);
+        virtual void TurnTo(geometry_msgs::Point target);
+
         virtual void PickUpTarget();
         virtual void DropTarget();
 
@@ -60,17 +71,26 @@ class Controller : public ControllerInterface {
 
         virtual void RePerentObject();
 
+
+        virtual double GetRotationTo(geometry_msgs::Point target);
+        
+        int CountTargets(); 
+        
+        void SetPathPlanning(PathPlanning pathPlanning, std::vector<Node> node);
+        
+        std::mutex mtx;
+        void ThreadedExecute();
+
+        void StartExecute();
+
+
+
         
     protected:
-        struct TargetStats {
-            geometry_msgs::Point location; //! location of goal
-            double distance; //! distance to goal
-            double time; //! time to goal
-        };
-        std::vector<TargetStats> Targets;
+        std::vector<geometry_msgs::Point> Targets;
 
         geometry_msgs::PoseStamped Goal;
-
+        ROSNode* ROSNode_; 
     };
 
 #endif // CONTROLLER
