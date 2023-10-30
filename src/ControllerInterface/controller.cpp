@@ -58,6 +58,7 @@ void Controller::Execute()
         goal_node = _pathPlanning.FindClosestNode(_node, goal_node);
         std::vector<Node> path = _pathPlanning.ShortestPath(start_node, goal_node);
 
+
         //Drive to each of the waypoints
         for (unsigned int k = 0; k < path.size(); k++) {
              geometry_msgs::Point steps;
@@ -72,6 +73,7 @@ void Controller::Execute()
         }
 
         //Drive to the final point to the goal
+
         Controller::DriveTo(goal);
 
         std::cout << "\n Robot reached target. Holding in place to pick up / drop off (emulate): " << std::endl;
@@ -103,6 +105,26 @@ void Controller::ThreadedExecute() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Sleep to prevent busy waiting
     }
     std::cout << "Execute thread enabled after iterations: " << iterator << std::endl;
+
+    Execute(); // Now startNode is true, proceed with Execute
+}
+
+void Controller::StartExecute() {
+    std::thread execThread(&Controller::ThreadedExecute, this);
+    execThread.detach(); // Detaching the thread if we don't need to join it later
+}
+
+void Controller::ThreadedExecute() {
+    // Wait until ROSNode_->startNode becomes true
+    while (true) {
+        {
+            std::lock_guard<std::mutex> lock(mtx); // Lock to check the shared variable safely
+            if (ROSNode_->startNode) {
+                break; // Exit the loop if startNode is true
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Sleep to prevent busy waiting
+    }
 
     Execute(); // Now startNode is true, proceed with Execute
 }
@@ -151,6 +173,7 @@ void Controller::CheckQRCode() {        // Parameter need to receive a image of 
 /// @param location 
 void Controller::DriveTo(geometry_msgs::Point location)
  {
+
     std::cout << "Driving to x:" << location.x << ", y: " << location.y << "..." << std::endl;
     // return;
     // Add driving logic here
@@ -158,6 +181,7 @@ void Controller::DriveTo(geometry_msgs::Point location)
 
 
     nav_msgs::Odometry odom = ROSNode_->returnOdom(); //Gathered from ROSNode
+
 
     //Turn the location into a pose
 
@@ -169,6 +193,7 @@ void Controller::DriveTo(geometry_msgs::Point location)
 
     //Hold in this function until the goal is reached
     double hyp = 9999;
+
     int iterator = 0;
 
     while (true)
@@ -188,8 +213,10 @@ void Controller::DriveTo(geometry_msgs::Point location)
         if (abs(hyp) <= tolerance_){
             break;
         }
+
         std::this_thread::sleep_for(std::chrono::seconds(1));
         std::cout << "Waiting to reach to x:" << location.x << ", y: " << location.y << ". Iterator: " << ++iterator << std::endl;
+
     }
 }
 
@@ -197,6 +224,7 @@ void Controller::DriveTo(geometry_msgs::Point location)
 /// @param location 
 void Controller::TurnTo(geometry_msgs::Point target) 
 {
+
     std::cout << "Initial rotation not functional: Target " << target << "..." << std::endl;
     return;
 
@@ -234,6 +262,8 @@ void Controller::TurnTo(geometry_msgs::Point target)
         std::cout << "Rotation remaining: "  << delta_yaw << std::endl;
         
         // Pause briefly to control the loop rate
+
+        ROSNode_->sendCmd(0,0,0,0,0,turningSpeed);
         std::this_thread::sleep_for(std::chrono::milliseconds(2));
     }
 }

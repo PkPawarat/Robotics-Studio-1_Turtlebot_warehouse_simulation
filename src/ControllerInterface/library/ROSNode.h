@@ -3,7 +3,9 @@
 
 #include <iostream>
 #include <vector>
+
 #include "ros/ros.h"
+#include "sensor.h"
 #include <atomic>
 #include <mutex>
 #include <thread>
@@ -14,10 +16,13 @@
 #include "sensor_msgs/Range.h"
 #include "sensor_msgs/LaserScan.h"
 #include "geometry_msgs/PoseArray.h"
+#include "geometry_msgs/Point32.h"
 #include "sensor_msgs/Image.h"
 #include "sensor_msgs/CameraInfo.h"
 #include "sensor_msgs/PointCloud2.h"
+#include "sensor_msgs/PointCloud.h"
 #include "geometry_msgs/PoseStamped.h"
+#include "sensor_msgs/point_cloud_conversion.h"
 #include "std_msgs/Float64.h"
 
 
@@ -70,7 +75,7 @@ public:
      * @brief Returns a LaserScan message.
      * @return sensor_msgs::LaserScan A LaserScan message.
      */
-    sensor_msgs::LaserScan returnLaserScan();
+    std::vector<geometry_msgs::Point> returnLaserScan();
 
     /**
      * @brief Returns an Image message.
@@ -78,9 +83,22 @@ public:
      */
     sensor_msgs::Image returnImage();
 
-    sensor_msgs::PointCloud2 returnPointCloud();
+    std::vector<geometry_msgs::Point32> returnPointCloud();
+
+    std::vector<geometry_msgs::Point32>  returnReducedPointCloud();
+
+    float calculateDistance(float x, float y, float z);
+
+
+    geometry_msgs::Point polarToCart(unsigned int index);
 
     void setUpInitialPose(nav_msgs::Odometry odom);
+
+
+
+    void setShelfDetectingFLag(bool flag);
+
+
 
 
 
@@ -98,13 +116,9 @@ public:
     void sendGoal(geometry_msgs::Pose position);
 
 public:
-    struct Point {
-        float x;
-        float y;
-        float z;
-    };
 
-    std::vector<Point> pcl_points;
+    std::vector<geometry_msgs::Point32> pcl_points;
+    // std::vector<geometry_msgs::Point> filteredLaserScan_;
     ros::NodeHandle nh_;
 
     ros::Subscriber odom;
@@ -119,8 +133,11 @@ public:
     geometry_msgs::PoseStamped bot_goal;
     nav_msgs::Odometry bot_odom;
     sensor_msgs::LaserScan bot_laser_scan;
+    sensor_msgs::LaserScan temp_scan;
     sensor_msgs::Image image_;
     sensor_msgs::PointCloud2 point_cloud;
+    
+    bool shelf_locating_flag;
 
     std::mutex robotMtx_;
 

@@ -31,13 +31,16 @@ int main(int argc, char **argv) {
     // Controller controller = Controller();
     ROSNode rosNode(nh);
 
+
     Controller* controller_= new Controller(&rosNode);
     PathPlanning pathFinder;
+
 
     //std::string path = ros::package::getPath("Robotics-Studio-1");
     //path += "/test/";
     //std::string file = path + "pointLocation.bag";
     std::string file = "/home/connor/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag";
+
     // Open the ROS bag containing geometry_msgs/PoseStamped messages from the point location
     rosbag::Bag bag;
     bag.open(file, rosbag::bagmode::Read);
@@ -68,8 +71,10 @@ int main(int argc, char **argv) {
     //Turn nodes into targets
     std::vector<geometry_msgs::Point> points;
 
+
     //file = path + "pickupshelf.bag";
     file = "/home/connor/catkin_ws/src/Robotics-Studio-1/logs/pickupshelf.bag";
+
 
     // Open the ROS bag containing geometry_msgs/PoseStamped messages from the point location
     rosbag::Bag bag2;
@@ -95,6 +100,7 @@ int main(int argc, char **argv) {
             Node node = {x, y};
             nodes2.push_back(node);
 
+
             //Send the bot to the desk after each
             geometry_msgs::Point home;
                 home.x = -3;
@@ -104,6 +110,7 @@ int main(int argc, char **argv) {
     }
 
     std::cout << "\n Passing points to Controller: " + points.size() << std::endl;
+
 
     controller_->SetTargets(points);
     controller_->SetPathPlanning(pathFinder, nodes);

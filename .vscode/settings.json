@@ -77,6 +77,14 @@
         "csignal": "cpp",
         "any": "cpp",
         "regex": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "csetjmp": "cpp",
+        "charconv": "cpp",
+        "codecvt": "cpp",
+        "cuchar": "cpp",
+        "forward_list": "cpp",
+        "future": "cpp",
+        "scoped_allocator": "cpp",
+        "valarray": "cpp"
     }
 }
