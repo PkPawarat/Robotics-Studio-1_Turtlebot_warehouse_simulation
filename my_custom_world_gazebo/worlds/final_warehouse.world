@@ -3952,6 +3952,7 @@
       <pose>2.45089 -2.56255 0 0 -0 0</pose>
     </model>
     <model name='Amazon Pod_clone_48'>
+            <plugin name="my_model_plugin" filename="libMoveModelPlugin.so"/>
       <link name='pod_link'>
         <inertial>
           <pose>0 0 1.2045 0 -0 0</pose>
@@ -4470,6 +4471,7 @@
       <model name='Amazon Pod_clone_48'>
         <pose>3.5 -2.5 0 0 -0 0</pose>
         <scale>1 1 1</scale>
+        <plugin name="my_model_plugin" filename="libMoveModelPlugin.so"/>
         <link name='pod_link'>
           <pose>3.5 -2.5 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
