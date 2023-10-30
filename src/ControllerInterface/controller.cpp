@@ -58,7 +58,8 @@ void Controller::Execute()
         goal_node = _pathPlanning.FindClosestNode(_node, goal_node);
         std::vector<Node> path = _pathPlanning.ShortestPath(start_node, goal_node);
 
-
+        ROSNode_->setShelfDetectingFlag(true);
+        
         //Drive to each of the waypoints
         for (unsigned int k = 0; k < path.size(); k++) {
              geometry_msgs::Point steps;
@@ -75,6 +76,8 @@ void Controller::Execute()
         //Drive to the final point to the goal
 
         Controller::DriveTo(goal);
+
+        ROSNode_->setShelfDetectingFlag(false);
 
         std::cout << "\n Robot reached target. Holding in place to pick up / drop off (emulate): " << std::endl;
 
@@ -109,25 +112,25 @@ void Controller::ThreadedExecute() {
     Execute(); // Now startNode is true, proceed with Execute
 }
 
-void Controller::StartExecute() {
-    std::thread execThread(&Controller::ThreadedExecute, this);
-    execThread.detach(); // Detaching the thread if we don't need to join it later
-}
+// void Controller::StartExecute() {
+//     std::thread execThread(&Controller::ThreadedExecute, this);
+//     execThread.detach(); // Detaching the thread if we don't need to join it later
+// }
 
-void Controller::ThreadedExecute() {
-    // Wait until ROSNode_->startNode becomes true
-    while (true) {
-        {
-            std::lock_guard<std::mutex> lock(mtx); // Lock to check the shared variable safely
-            if (ROSNode_->startNode) {
-                break; // Exit the loop if startNode is true
-            }
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Sleep to prevent busy waiting
-    }
+// void Controller::ThreadedExecute() {
+//     // Wait until ROSNode_->startNode becomes true
+//     while (true) {
+//         {
+//             std::lock_guard<std::mutex> lock(mtx); // Lock to check the shared variable safely
+//             if (ROSNode_->startNode) {
+//                 break; // Exit the loop if startNode is true
+//             }
+//         }
+//         std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Sleep to prevent busy waiting
+//     }
 
-    Execute(); // Now startNode is true, proceed with Execute
-}
+//     Execute(); // Now startNode is true, proceed with Execute
+// }
 
 /// @brief set the target to Targets global variable, only use the location of the tagets.
 /// @param targets 

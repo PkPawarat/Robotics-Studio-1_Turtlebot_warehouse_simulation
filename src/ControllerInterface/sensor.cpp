@@ -38,7 +38,10 @@ float Sensor::detectShelf(std::vector<geometry_msgs::Point> laser_scan){
     std::vector<float> shelf_locations;
     
     int shelf = 0;
-
+    if (laser_scan.size() < 1){
+        std::cout << "Failed to receive scan. Attempting again." << std::endl;
+        return -1;
+    }
     for (int j = 0; j < laser_scan.size(); ++j){
         if(laser_scan.at(j).x  > 0 ){
             filteredLaserScan_.push_back(laser_scan.at(j));
@@ -46,7 +49,7 @@ float Sensor::detectShelf(std::vector<geometry_msgs::Point> laser_scan){
     }
     float temp_ = filteredLaserScan_.at(0).y;
     float first_y_point = filteredLaserScan_.at(0).y;
-    for (int i = 1; i < filteredLaserScan_.size()-1; ++i){
+    for (int i = 0; i < filteredLaserScan_.size(); ++i){
         if ((abs(temp_)-abs(filteredLaserScan_.at(i).y)) < 1){
             // std::cout << "no" << std::endl;
         }else{
@@ -61,10 +64,13 @@ float Sensor::detectShelf(std::vector<geometry_msgs::Point> laser_scan){
         temp_ = filteredLaserScan_.at(i).y;
     }
 
-    std::cout << shelf_locations.size() << std::endl;
+    // std::cout << shelf_locations.size() << std::endl;
+    if (shelf_locations.size() < 1){
+        return 0;
+    }
     float max_y = shelf_locations.at(0);
     
-    for(int k = 1; k < shelf_locations.size(); ++k){
+    for(int k = 0; k < shelf_locations.size(); ++k){
         if(abs(shelf_locations.at(k)) > abs(max_y)){
             max_y = shelf_locations.at(k);
         }
@@ -72,7 +78,7 @@ float Sensor::detectShelf(std::vector<geometry_msgs::Point> laser_scan){
     float first_y_pair = max_y;
     
     for(int l = 0; l < shelf_locations.size(); ++l){
-        std::cout << abs(shelf_locations.at(l)) << std::endl;
+        // std::cout << abs(shelf_locations.at(l)) << std::endl;
         if(abs(shelf_locations.at(l)) < abs(first_y_pair)){
             first_y_pair = shelf_locations.at(l);
         }
@@ -83,7 +89,7 @@ float Sensor::detectShelf(std::vector<geometry_msgs::Point> laser_scan){
     }
     float second_y_pair = max_y;
     for(int m = 0; m < shelf_locations.size(); ++m){
-        std::cout << abs(shelf_locations.at(m)) << std::endl;
+        // std::cout << abs(shelf_locations.at(m)) << std::endl;
         if(flag = true){
             if(abs(shelf_locations.at(m)) < abs(second_y_pair) && shelf_locations.at(m) != first_y_pair && shelf_locations.at(m) < 0){
                 second_y_pair = shelf_locations.at(m);
@@ -94,7 +100,7 @@ float Sensor::detectShelf(std::vector<geometry_msgs::Point> laser_scan){
             }
         }
     }
-    std::cout << first_y_pair << ", " << second_y_pair << std::endl;
+    // std::cout << first_y_pair << ", " << second_y_pair << std::endl;
 
     return (first_y_pair+second_y_pair)/2;
     // shelf height is above 0.4 (may need to adjust as i believe it might be higher)

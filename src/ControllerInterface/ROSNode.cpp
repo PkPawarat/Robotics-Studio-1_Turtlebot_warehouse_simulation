@@ -50,15 +50,18 @@ void ROSNode::simulate()
     // Add ROS simulation logic here
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
-    ROS_INFO_STREAM(bot_odom);
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    // ROS_INFO_STREAM(bot_odom);
+    // std::this_thread::sleep_for(std::chrono::seconds(2));
     
     Sensor sensor;
-    while(shelf_locating_flag == true){
-        float y_value = sensor.detectShelf(returnLaserScan());
-        std::cout << "Centre of the road is " << y_value << "away fom the robot" << std::endl;
+    while(true){
+        std::cout << "start detecting between the shelves" << std::endl;
+        if(shelf_locating_flag == true){
+            float y_value = sensor.detectShelf(returnLaserScan());
+            std::cout << "Centre of the road is " << y_value << " way fom the robot" << std::endl;
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(2));
     }
-
     // ROS_INFO_STREAM(returnReducedPointCloud().size());
     // ROS_INFO_STREAM(returnLaserScan().size());
 
@@ -113,6 +116,10 @@ nav_msgs::Odometry ROSNode::returnOdom()
 std::vector<geometry_msgs::Point> ROSNode::returnLaserScan()
 {
     std::vector<geometry_msgs::Point> filteredLaserScan_;
+    // if (bot_laser_scan == nullptr) {
+    //     std::cout << "Failed to receive scan. Attempting again." << std::endl;
+    //     // return filteredLaserScan; // Return an empty vector.
+    // }
     temp_scan = bot_laser_scan;
     for (int i = bot_laser_scan.ranges.size() - 1; i >= 0; i--)
     {
@@ -215,13 +222,7 @@ float ROSNode::calculateDistance(float x, float y, float z) {
                                std::pow(z, 2));
     return distance;
 }
-// int main(int argc, char **argv) {
-//     ros::init(argc, argv, "object_detection_node");
-//     ros::NodeHandle nh_;
-//     ROSNode rosnode(nh_);
-//     ros::spin();
-//     return 0;
-// }
+
 void ROSNode::sendGoal(geometry_msgs::Pose position)
 {
     std::string map = "map";

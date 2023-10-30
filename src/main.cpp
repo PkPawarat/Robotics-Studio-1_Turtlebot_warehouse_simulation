@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
     //std::string path = ros::package::getPath("Robotics-Studio-1");
     //path += "/test/";
     //std::string file = path + "pointLocation.bag";
-    std::string file = "/home/connor/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag";
+    std::string file = "/home/pk/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag";
 
     // Open the ROS bag containing geometry_msgs/PoseStamped messages from the point location
     rosbag::Bag bag;
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
             nodes.push_back(node);
         }
     }
-    pathFinder.DrawMap(nodes, 0.5);
+    // pathFinder.DrawMap(nodes, 0.5);
     // Add nodes and edges to the path planner
     pathFinder.AutumeticAddingEdge(nodes);
 
@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 
 
     //file = path + "pickupshelf.bag";
-    file = "/home/connor/catkin_ws/src/Robotics-Studio-1/logs/pickupshelf.bag";
+    file = "/home/pk/catkin_ws/src/Robotics-Studio-1/logs/pickupshelf.bag";
 
 
     // Open the ROS bag containing geometry_msgs/PoseStamped messages from the point location

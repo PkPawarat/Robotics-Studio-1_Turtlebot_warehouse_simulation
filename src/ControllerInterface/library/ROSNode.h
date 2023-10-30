@@ -96,7 +96,7 @@ public:
 
 
 
-    void setShelfDetectingFLag(bool flag);
+    void setShelfDetectingFlag(bool flag);
 
 
 
