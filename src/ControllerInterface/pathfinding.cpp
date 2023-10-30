@@ -173,7 +173,7 @@ void PathPlanning::DrawMapWithShortestPath(const std::vector<Node>& locations, c
     
 
     // For logging
-    std::ofstream logFile("/home/pawarat/catkin_ws/src/Robotics-Studio-1/logs/path_log.txt", std::ios::app); // Open in append mode
+    std::ofstream logFile("/home/connor/catkin_ws/src/Robotics-Studio-1/logs/path_log.txt", std::ios::app); // Open in append mode
     
     // Error checking for file opening
     if (!logFile.is_open()) {

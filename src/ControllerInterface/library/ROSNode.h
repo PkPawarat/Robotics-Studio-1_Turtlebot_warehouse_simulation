@@ -89,14 +89,17 @@ public:
 
     float calculateDistance(float x, float y, float z);
 
+
     geometry_msgs::Point polarToCart(unsigned int index);
 
-<<<<<<< HEAD
-    void setShelfDetectingFLag(bool flag);
-=======
     void setUpInitialPose(nav_msgs::Odometry odom);
 
->>>>>>> c1d8170cc53dbc32341c669c652c1a1360d7738b
+
+
+    void setShelfDetectingFLag(bool flag);
+
+
+
 
 
     /**

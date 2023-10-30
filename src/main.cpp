@@ -30,15 +30,17 @@ int main(int argc, char **argv) {
     ros::NodeHandle nh;
     // Controller controller = Controller();
     ROSNode rosNode(nh);
-    // Sensor sensor;
+
 
     Controller* controller_= new Controller(&rosNode);
     PathPlanning pathFinder;
 
-    std::string path = ros::package::getPath("Robotics-Studio-1");
-    path += "/test/";
-    std::string file = path + "pointLocation.bag";
-    file = "/home/pk/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag";
+
+    //std::string path = ros::package::getPath("Robotics-Studio-1");
+    //path += "/test/";
+    //std::string file = path + "pointLocation.bag";
+    std::string file = "/home/connor/catkin_ws/src/Robotics-Studio-1/logs/pointLocation.bag";
+
     // Open the ROS bag containing geometry_msgs/PoseStamped messages from the point location
     rosbag::Bag bag;
     bag.open(file, rosbag::bagmode::Read);
@@ -69,8 +71,10 @@ int main(int argc, char **argv) {
     //Turn nodes into targets
     std::vector<geometry_msgs::Point> points;
 
-    file = path + "pickupshelf.bag";
-    file = "/home/pk/catkin_ws/src/Robotics-Studio-1/logs/pickupshelf.bag";
+
+    //file = path + "pickupshelf.bag";
+    file = "/home/connor/catkin_ws/src/Robotics-Studio-1/logs/pickupshelf.bag";
+
 
     // Open the ROS bag containing geometry_msgs/PoseStamped messages from the point location
     rosbag::Bag bag2;
@@ -95,13 +99,24 @@ int main(int argc, char **argv) {
 
             Node node = {x, y};
             nodes2.push_back(node);
+
+
+            //Send the bot to the desk after each
+            geometry_msgs::Point home;
+                home.x = -3;
+                home.y = -4.5;
+            points.push_back(home);
         }
     }
+
+    std::cout << "\n Passing points to Controller: " + points.size() << std::endl;
+
 
     controller_->SetTargets(points);
     controller_->SetPathPlanning(pathFinder, nodes);
     // Create a thread to run the Execute function
     std::thread execute_thread(&Controller::ThreadedExecute, controller_);
+
     // controller_->Execute();
     
 

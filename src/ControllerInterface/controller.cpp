@@ -43,8 +43,9 @@ void Controller::Execute()
 
     //Waypoints are worked out in the pathfinder functions 
 
-    std::cout << "Waypoint count: " + Targets.size() << std::endl;
+    std::cout << "\n Waypoint count: " + Targets.size() << std::endl;
 
+    int a = Targets.size();
     for (unsigned int i = 0; i < Targets.size(); i++)
     {
         nav_msgs::Odometry start = ROSNode_->bot_odom;
@@ -57,21 +58,55 @@ void Controller::Execute()
         goal_node = _pathPlanning.FindClosestNode(_node, goal_node);
         std::vector<Node> path = _pathPlanning.ShortestPath(start_node, goal_node);
 
-        // for (unsigned int k = 0; k < path.size(); k++) {
-        //     geometry_msgs::Point steps;
-        //     steps.x = path.at(k).X;
-        //     steps.y = path.at(k).Y;
-        //     // Controller::TurnTo(steps);
 
-        //     //check for collision
-        //     std::cout << "Robot turned towards waypoint. Driving function started" << std::endl;
+        //Drive to each of the waypoints
+        for (unsigned int k = 0; k < path.size(); k++) {
+             geometry_msgs::Point steps;
+             steps.x = path.at(k).X;
+             steps.y = path.at(k).Y;
+             //Controller::TurnTo(steps);
 
-        //     Controller::DriveTo(steps);
-        // }
+             //check for collision
+             //std::cout << "Robot turned towards waypoint. Driving function started" << std::endl;
+
+             Controller::DriveTo(steps);
+        }
+
+        //Drive to the final point to the goal
+
         Controller::DriveTo(goal);
 
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::cout << "\n Robot reached target. Holding in place to pick up / drop off (emulate): " << std::endl;
+
+        //Stop the robot for a few seconds in place
+        std::this_thread::sleep_for(std::chrono::seconds(10));
     }
+
+    std::cout << "\n Driving complete: " + Targets.size() << std::endl;
+}
+
+void Controller::StartExecute() {
+    std::thread execThread(&Controller::ThreadedExecute, this);
+    execThread.detach(); // Detaching the thread if we don't need to join it later
+}
+
+void Controller::ThreadedExecute() {
+    // Wait until ROSNode_->startNode becomes true
+    unsigned int iterator = 0;
+    while (true) {
+        {
+            std::lock_guard<std::mutex> lock(mtx); // Lock to check the shared variable safely
+            if (ROSNode_->startNode) {
+                break; // Exit the loop if startNode is true
+            }
+        std::cout << "Failed attempt to run Controller::Execute thread. Iterations: " << ++iterator << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Sleep to prevent busy waiting
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Sleep to prevent busy waiting
+    }
+    std::cout << "Execute thread enabled after iterations: " << iterator << std::endl;
+
+    Execute(); // Now startNode is true, proceed with Execute
 }
 
 void Controller::StartExecute() {
@@ -138,21 +173,29 @@ void Controller::CheckQRCode() {        // Parameter need to receive a image of 
 /// @param location 
 void Controller::DriveTo(geometry_msgs::Point location)
  {
-    std::cout << "Driving to " << location << "..." << std::endl;
+
+    std::cout << "Driving to x:" << location.x << ", y: " << location.y << "..." << std::endl;
     // return;
     // Add driving logic here
     double tolerance_ = 0.4;
+
+
+    nav_msgs::Odometry odom = ROSNode_->returnOdom(); //Gathered from ROSNode
+
 
     //Turn the location into a pose
 
     geometry_msgs::Pose GoalPose; 
     GoalPose.position = location;
+    GoalPose.orientation = odom.pose.pose.orientation; //Robots current direction facing is the orientation
 
     ROSNode_->sendGoal(GoalPose);
 
     //Hold in this function until the goal is reached
     double hyp = 9999;
-    
+
+    int iterator = 0;
+
     while (true)
     {
         nav_msgs::Odometry odom = ROSNode_->returnOdom(); //Gathered from ROSNode
@@ -170,7 +213,10 @@ void Controller::DriveTo(geometry_msgs::Point location)
         if (abs(hyp) <= tolerance_){
             break;
         }
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::cout << "Waiting to reach to x:" << location.x << ", y: " << location.y << ". Iterator: " << ++iterator << std::endl;
+
     }
 }
 
@@ -178,11 +224,23 @@ void Controller::DriveTo(geometry_msgs::Point location)
 /// @param location 
 void Controller::TurnTo(geometry_msgs::Point target) 
 {
-    std::cout << "Turning to " << target << "..." << std::endl;
-    // return;
+
+    std::cout << "Initial rotation not functional: Target " << target << "..." << std::endl;
+    return;
+
+    nav_msgs::Odometry odom = ROSNode_->returnOdom(); //Gathered from ROSNode
+
+    //Turn the location into a pose
+
+    geometry_msgs::Pose GoalPose; 
+    GoalPose.position = odom.pose.pose.position;
+    //GoalPose.orientation = odom.pose.pose; //Robots current direction facing is the orientation
+
+    ROSNode_->sendGoal(GoalPose);
+
     
     //Function helpers
-    double angleTolerance = 0.05;
+    double angleTolerance = 0.1;
     double turningSpeed = 0.2; // Set the angular velocity to make the TurtleBot rotate. Adjust the value as needed
 
     //Use another function to calculate the turning required
@@ -208,8 +266,6 @@ void Controller::TurnTo(geometry_msgs::Point target)
         ROSNode_->sendCmd(0,0,0,0,0,turningSpeed);
         std::this_thread::sleep_for(std::chrono::milliseconds(2));
     }
-
-    ROSNode_->sendCmd(0,0,0,0,0,0);
 }
 
 /// @brief Pass in a point on the map. This function will return (in radians) the rotation required to turn to the point.

@@ -11,6 +11,7 @@ ROSNode::ROSNode(ros::NodeHandle nh) : nh_(nh){
     pub_vel = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 3, false);
     pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
 
+
     // std::this_thread::sleep_for(std::chrono::seconds(5));
     // pub_goal = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 3, false);
 
