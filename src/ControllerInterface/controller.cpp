@@ -71,6 +71,7 @@ void Controller::Execute()
              Controller::DriveTo(steps);
         }
 
+
         //Drive to the final point to the goal
         Controller::DriveTo(goal);
 
