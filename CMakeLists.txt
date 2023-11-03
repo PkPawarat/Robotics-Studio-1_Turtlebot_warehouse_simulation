@@ -57,17 +57,17 @@ add_library(${PROJECT_NAME}_pathfinding src/ControllerInterface/pathfinding.cpp)
 add_library(${PROJECT_NAME}_ROSNode src/ControllerInterface/ROSNode.cpp)
 
 ## Declare a C++ executable
-add_executable(${PROJECT_NAME}_sample src/main.cpp src/ControllerInterface/controller.cpp src/ControllerInterface/sensor.cpp src/ControllerInterface/pathfinding.cpp src/ControllerInterface/ROSNode.cpp)
+add_executable(${PROJECT_NAME}_main src/main.cpp src/ControllerInterface/controller.cpp src/ControllerInterface/sensor.cpp src/ControllerInterface/pathfinding.cpp src/ControllerInterface/ROSNode.cpp)
 
 # Add cmake target dependencies of the executable
 # This enforces generating messages before building these executables
-add_dependencies(${PROJECT_NAME}_sample ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_main ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 # Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor)
-target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_controller)
-target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding)
-target_link_libraries(${PROJECT_NAME}_sample ${catkin_LIBRARIES} ${PROJECT_NAME}_ROSNode)
+target_link_libraries(${PROJECT_NAME}_main ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor)
+target_link_libraries(${PROJECT_NAME}_main ${catkin_LIBRARIES} ${PROJECT_NAME}_controller)
+target_link_libraries(${PROJECT_NAME}_main ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding)
+target_link_libraries(${PROJECT_NAME}_main ${catkin_LIBRARIES} ${PROJECT_NAME}_ROSNode)
 #############
 ## Testing ##
 #############
@@ -81,11 +81,11 @@ target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_R
 message ( STATUS " catkin_LIBRARIES ${catkin_LIBRARIES}")
 endif()
 
-catkin_add_gtest(${PROJECT_NAME}_testmission test/missiontest.cpp )
-if(TARGET ${PROJECT_NAME}_testmission)
-  target_link_libraries(${PROJECT_NAME}_testmission ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor )
-  target_link_libraries(${PROJECT_NAME}_testmission ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding )
-  target_link_libraries(${PROJECT_NAME}_testmission ${catkin_LIBRARIES} ${PROJECT_NAME}_controller )
-  target_link_libraries(${PROJECT_NAME}_testmission ${catkin_LIBRARIES} ${PROJECT_NAME}_ROSNode)
-  message ( STATUS " catkin_LIBRARIES ${catkin_LIBRARIES}")
+catkin_add_gtest(${PROJECT_NAME}_mission test/missiontest.cpp )
+if(TARGET ${PROJECT_NAME}_mission)
+target_link_libraries(${PROJECT_NAME}_mission ${catkin_LIBRARIES} ${PROJECT_NAME}_sensor )
+target_link_libraries(${PROJECT_NAME}_mission ${catkin_LIBRARIES} ${PROJECT_NAME}_pathfinding )
+target_link_libraries(${PROJECT_NAME}_mission ${catkin_LIBRARIES} ${PROJECT_NAME}_controller )
+target_link_libraries(${PROJECT_NAME}_mission ${catkin_LIBRARIES} ${PROJECT_NAME}_ROSNode)
+message ( STATUS " catkin_LIBRARIES ${catkin_LIBRARIES}")
 endif()
